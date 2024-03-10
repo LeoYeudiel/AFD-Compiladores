@@ -114,7 +114,7 @@ int main(int argc, char *argv[]){
       y = 0;
       printf("\n Inserta la cadena W: \n");
       scanf("%[^\n]", cadena);
-      printf("De la cadena %s, %zu, ", cadena, strlen(cadena));
+      printf("\tDe la cadena %s ", cadena);
       while(cadena[y+1] != '\0'){
         apilar(Stack, cadena[y]);
         y++;
