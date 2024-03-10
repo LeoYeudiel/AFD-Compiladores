@@ -1,27 +1,28 @@
 /* Librerías a utilizar */
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 /*Declaración de Estructuras.
 
-Observando la descripcíon del automáta en manera de tabla
+Observando la descripción del autómata en forma de tabla
 La estructura Estados representa un estado asociado a una fila
-En cada fila se encuentra un array de elementos que describen al automata*/
+En cada fila se encuentra un array de elementos que describen al autómata*/
+
 typedef struct Estados{
-    char *estado;//puntero a una cadena de caracteres
+    char *estado; //puntero a una cadena de caracteres
     int *fila;
-	  int aceptacion;
-	  char **filaEst;
+	int aceptacion;
+	char **filaEst;
 }Estados;
 
 typedef struct Nodo_Pila{
     char letra;
-    struct Nodo_Pila * anterior;
+    struct Nodo_Pila *anterior;
 }Nodo_Pila;
 
 typedef struct{
-	Nodo_Pila * tope;
+	Nodo_Pila *tope;
 }Pila;
 
 /* Prototipos de funciones */
@@ -32,7 +33,7 @@ int operaciones(FILE *, char, Estados **, char ***);
 int deleteLines(FILE *, char);
 char saltoComentarios(FILE *, char);
 int es_vaciaPila(Pila *);
-Nodo_Pila * crearNodoPila();
+Nodo_Pila *crearNodoPila();
 char elemTope(Pila *);
 void apilar(Pila *, char);
 char desapilar(Pila *);
