@@ -72,15 +72,17 @@ int main(int argc, char *argv[]){
     //Simbolos va a ser un arreglo de punteros a caracteres
     char **Simbolos=NULL;
     navegar(archivo, &codigo, &columnaEstados, &Simbolos); //Pasamos la dirección de memoria de los arrays
-    /*  */
+    /* Guardamos la cantidad de estados y de simbolos de nuestro automata */
     NumEstados = *(columnaEstados->fila);
     numSimbolos = *((columnaEstados+1)->fila);
+    /* Imprimimos la tabla de transiciones del automata */
     printf("\n === REPRESENTACION DEL AFD ===\n \n");
     printf("       |   ");
+    /* Imprimimos la primera fila que contiene los simbolos */
     for(i=0;i<numSimbolos;i++){
       printf("%s    ", *(Simbolos+i));
     }
-    printf("\n_ _ _ _ _ _ _ _ _ _ _ ");
+    printf("\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _");
     for(i=0;i<NumEstados;i++){
       printf("\n");
       if(i==0){
@@ -93,16 +95,16 @@ int main(int argc, char *argv[]){
         if((columnaEstados+i)->aceptacion==1){
           printf("   *%s |", (columnaEstados+i)->estado);
         }else{
-          printf("   %s |", (columnaEstados+i)->estado);
+          printf("    %s |", (columnaEstados+i)->estado);
         }
         
       }
       for(j=0;j<numSimbolos;j++){
-        printf("  %s", *(((columnaEstados+i)->filaEst)+j));
+        printf("    %s", *(((columnaEstados+i)->filaEst)+j));
       }
       
     }
-    printf("\n_ _ _ _ _ _ _ _ _ _ _ \n");
+    printf("\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _");
     Pila *Stack, *Stack2;
     Stack=CrearPila();
     Stack2=CrearPila();
@@ -111,7 +113,7 @@ int main(int argc, char *argv[]){
     while((letra=getchar()) != '\n'){
       apilar(Stack, letra);
     }
-    IntercambiarPilas(Stack, Stack2);//OBTENEMOS LA CADENA ORIGINAL EN EL ORDEN CORRECTO
+    IntercambiarPilas(Stack, Stack2);//Obtenemos la cadena original en el orden correcto
     EstadoPos=0;
     EstadoPos=RecorridoAFD(Stack2, columnaEstados, Simbolos);
     if((columnaEstados+EstadoPos)->aceptacion==1){
@@ -748,10 +750,19 @@ Pila *CrearPila(){
 	return S;
 	
 }
+
+/* 
+  Función para recorrer toda la cadena conforme al autómata
+  Argumentos:
+    - Stack: contiene la cadena a analizar
+    - columnaEstados: contiene la información del automata
+    - simbolos: contiene todos los simbolos del automata
+ */
 int RecorridoAFD(Pila *Stack, Estados *columnaEstados, char **Simbolos){
 	char *aux, *aux2;
 	int fila=0;
 	aux2=(char*)malloc(2*sizeof(char));
+  /* Leemos toda la cadena y vamos comparando conforme lo que hemos guardado */
 	while(es_vaciaPila(Stack)!=1){
 		*aux2=desapilar(Stack);
 		*(aux2+1)='\0';
