@@ -77,10 +77,10 @@ int main(int argc, char *argv[]){
     numSimbolos = *((columnaEstados+1)->fila);
     /* Imprimimos la tabla de transiciones del automata */
     printf("\n === REPRESENTACION DEL AFD ===\n \n");
-    printf("       |   ");
+    printf("       |     ");
     /* Imprimimos la primera fila que contiene los simbolos */
     for(i=0;i<numSimbolos;i++){
-      printf("%s    ", *(Simbolos+i));
+      printf("%s     ", *(Simbolos+i));
     }
     printf("\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _");
     for(i=0;i<NumEstados;i++){
@@ -109,14 +109,13 @@ int main(int argc, char *argv[]){
     int x = atoi(argv[2]), y = 0;
     char *cadena;
     while(x){
-      Stack=CrearPila();
+      Stack= CrearPila();
       Stack2=CrearPila();
       y = 0;
-
       printf("\n Inserta la cadena W: \n");
       scanf("%[^\n]", cadena);
-      printf(" de la cadena %s, ", cadena);
-      while(cadena[y] != '\0'){
+      printf("De la cadena %s, %zu, ", cadena, strlen(cadena));
+      while(cadena[y+1] != '\0'){
         apilar(Stack, cadena[y]);
         y++;
       }

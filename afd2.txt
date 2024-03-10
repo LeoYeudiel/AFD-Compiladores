@@ -1,9 +1,11 @@
 /*
 ============= OMAR REDONDO GONZALEZ =============
------------ ESCOM-IPN. INGENIERIA EN SISTEMAS COMPUTACIONALES -----------
------------ TEORÍA DE LA COMPUTACIÓN -----------
+============= LEO YEUDIEL PIÑA RAMÍREZ =============
+============= CÉSAR ALEJANDRO LECHUGA CERVANTES =============
+----------- ESCOM-IPN INGENIERÍA EN SISTEMAS COMPUTACIONALES -----------
+----------- COMPILADORES -----------
 ============= DESCRIPCIÓN DE UN AUTOMÁTA FINITO DETERMINISTA =============
------ AUTÓMATA QUE ACEPTA TODAS LAS CADENAS QUE CONTENGAN LA SUCADENA 01 -----
+----- AUTÓMATA QUE ACEPTA NÚMEROS ENTEROS O REALES CON O SIN SIGNO -----
 */
 
 
@@ -15,7 +17,7 @@ q1, q2, q3, q4, q5, q123
 */
 
 EEE:
-q1, q2, q0
+q0, q1, q2, q3, q4, q_1
 
 
 
@@ -27,7 +29,7 @@ a, b, c, d
 */
 
 SSS:
-0, 1
+0, 1, 2, 3, 4, 5, 6, 7, 8, 9, +, -, .
 
 /*INSERTA EL ESTADO INICIAL. ESCRIBE "III:" PARA ESPECIFICAR QUE A CONTINUACION VIENE EL ESTADO INICIAL
 EJEMPLO:
@@ -48,7 +50,7 @@ a1, a2, a3, a5
 */
 
 AAA:
-q1
+q1, q4
 
 /*
 INSERTA LA FUNCION DELTA. ESCRIBE "DDD:" PARA ESPECIFICAR QUE A CONTINUACION VIENE LA FUNCION DELTA
@@ -63,9 +65,15 @@ q1:
 */ 
 
 DDD:
-q1:
-(0-q1), (1-q1)
 q0:
-(0-q2), (1-q0)
+(0-q1), (1-q1), (2-q1), (3-q1), (4-q1), (5-q1), (6-q1), (7-q1), (8-q1), (9-q1), (+-q2), (--q2), (.-q3)
+q1:
+(0-q1), (1-q1), (2-q1), (3-q1), (4-q1), (5-q1), (6-q1), (7-q1), (8-q1), (9-q1), (+-q_1), (--q_1), (.-q3)
 q2:
-(0-q2), (1-q1)
+(0-q1), (1-q1), (2-q1), (3-q1), (4-q1), (5-q1), (6-q1), (7-q1), (8-q1), (9-q1), (+-q_1), (--q_1), (.-q3)
+q3:
+(0-q4), (1-q4), (2-q4), (3-q4), (4-q4), (5-q4), (6-q4), (7-q4), (8-q4), (9-q4), (+-q_1), (--q_1), (.-q_1)
+q4:
+(0-q4), (1-q4), (2-q4), (3-q4), (4-q4), (5-q4), (6-q4), (7-q4), (8-q4), (9-q4), (+-q_1), (--q_1), (.-q_1)
+q_1:
+(0-q_1), (1-q_1), (2-q_1), (3-q_1), (4-q_1), (5-q_1), (6-q_1), (7-q_1), (8-q_1), (9-q_1), (+-q_1), (--q_1), (.-q_1)

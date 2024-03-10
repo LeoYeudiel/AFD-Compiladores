@@ -1,9 +1,11 @@
 /*
 ============= OMAR REDONDO GONZALEZ =============
------------ ESCOM-IPN. INGENIERIA EN SISTEMAS COMPUTACIONALES -----------
------------ TEORÍA DE LA COMPUTACIÓN -----------
+============= LEO YEUDIEL PIÑA RAMÍREZ =============
+============= CÉSAR ALEJANDRO LECHUGA CERVANTES =============
+----------- ESCOM-IPN INGENIERÍA EN SISTEMAS COMPUTACIONALES -----------
+----------- COMPILADORES -----------
 ============= DESCRIPCIÓN DE UN AUTOMÁTA FINITO DETERMINISTA =============
------ AUTÓMATA QUE ACEPTA TODAS LAS CADENAS QUE CONTENGAN UN NUMERO PARA DE 0'S Y UN NUMERO PAR DE 1'S -----
+----- AUTÓMATA QUE ACEPTA CADENAS BINARIAS QTE TERMINAN CON LA SUBCADENA 00 -----
 */
 
 
@@ -15,7 +17,7 @@ q1, q2, q3, q4, q5, q123
 */
 
 EEE:
-q1, q2, q0, q3
+q0, q1, q2
 
 
 
@@ -48,7 +50,7 @@ a1, a2, a3, a5
 */
 
 AAA:
-q0
+q2
 
 /*
 INSERTA LA FUNCION DELTA. ESCRIBE "DDD:" PARA ESPECIFICAR QUE A CONTINUACION VIENE LA FUNCION DELTA
@@ -64,10 +66,8 @@ q1:
 
 DDD:
 q0:
-(0-q2), (1-q1)
-q2:
-(0-q0), (1-q3)
-q3:
-(0-q1), (1-q2)
+(0-q1), (1-q0)
 q1:
-(0-q3), (1-q0)
+(0-q2), (1-q0)
+q2:
+(0-q2), (1-q0)
