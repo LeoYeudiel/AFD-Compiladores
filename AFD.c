@@ -50,8 +50,8 @@ int RecorridoAFD(Pila *, Estados *, char **);
 
 int main(int argc, char *argv[]){
     /* Verificamos de que nos haya proprocionado el archivo donde viene el autómata con sus específicaciones  */
-    if (argc != 2) {
-        printf("Uso incorrecto. Debe proporcionar un nombre de archivo como argumento.\n");
+    if (argc != 3) {
+        printf("Uso incorrecto. Debe proporcionar un nombre de archivo como argumento y el tamaño de cadenas a probar.\n");
         return 1;
     }
     /* Abrimos el archivo en modo lectura */
@@ -106,27 +106,41 @@ int main(int argc, char *argv[]){
     }
     printf("\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _");
     Pila *Stack, *Stack2;
-    Stack=CrearPila();
-    Stack2=CrearPila();
-    
-    printf("\n Inserta la cadena W: \n");
-    while((letra=getchar()) != '\n'){
-      apilar(Stack, letra);
-    }
-    IntercambiarPilas(Stack, Stack2);//Obtenemos la cadena original en el orden correcto
-    EstadoPos=0;
-    EstadoPos=RecorridoAFD(Stack2, columnaEstados, Simbolos);
-    if((columnaEstados+EstadoPos)->aceptacion==1){
-      printf("\n LA CADENA W SI PERTENECE AL LENGUAJE\n");
-    }else{
-      printf("\n LA CADENA W NO PERTENECE AL LENGUAJE\n");
-    }
+    int x = atoi(argv[2]), y = 0;
+    char *cadena;
+    while(x){
+      Stack=CrearPila();
+      Stack2=CrearPila();
+      y = 0;
 
+      printf("\n Inserta la cadena W: \n");
+      scanf("%[^\n]", cadena);
+      printf(" de la cadena %s, ", cadena);
+      while(cadena[y] != '\0'){
+        apilar(Stack, cadena[y]);
+        y++;
+      }
+      /* while((letra=getchar()) != '\n'){
+        apilar(Stack, letra);
+      } */
+      IntercambiarPilas(Stack, Stack2);//Obtenemos la cadena original en el orden correcto
+      EstadoPos=0;
+      EstadoPos=RecorridoAFD(Stack2, columnaEstados, Simbolos);
+      if((columnaEstados+EstadoPos)->aceptacion==1){
+        printf("\n LA CADENA W SI PERTENECE AL LENGUAJE\n");
+      }else{
+        printf("\n LA CADENA W NO PERTENECE AL LENGUAJE\n");
+      }
+      /* free(cadena); */
+      getchar();
+      free(Stack);
+      free(Stack2);
+      x--;
+    }
+    
     /* Liberamos memoria */
     free(columnaEstados->fila);
     free((columnaEstados+1)->fila);
-    free(Stack);
-    free(Stack2);
     free(columnaEstados);
     free(Simbolos);
 }
