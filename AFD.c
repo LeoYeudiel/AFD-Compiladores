@@ -273,13 +273,22 @@ void navegar(FILE *archivo, int *codigo, Estados **columnaEstados, char ***Simbo
     - archivo: descriptor del archivo de lectura
     - codigo: detección del tipo de información a considerar
     - columnaEstados: estructura que contiene la tabla de transciones
-    - Simbolos:
+    - Simbolos: Guarda todo el alfabeto aqui
  */
 int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolos){
 	char letra;
 	int i;
 	Pila *Stack, *Stack2;
-	int numEstados, x=0, tamEstado;
+	int numEstados, x=0, tamEstado, numSimbolos, tamSimbolo;
+  char *estadoIni, *aux;
+  int EstadoBuscado;
+	char *estadoAceptacion;
+  char *EstadoAct;
+	Pila *Stack3, *Stack4;
+	int iterador, posSimbolo, posEstado, contador;
+	long posicionInicial;
+	int numLineas;
+  int caracterActual;
 	switch (codigo){
 	case 207: //Estados
 		Stack=CrearPila();
@@ -324,49 +333,51 @@ int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolo
 		free(Stack2);
 		break;
 	case 249: //Alfabeto
-		int numSimbolos=1, tamSimbolo;
+		numSimbolos=1, tamSimbolo;
 		Stack=CrearPila();
 		Stack2=CrearPila();
 		//Se inserta toda la fila en la pila Stack
 		numSimbolos=insertarFilaEnPila(archivo, Stack);
-		//SE ABRE ESPACIO EN MEMORIA PARA LA ESTRUCTURA QUE REPRESENTA LA COLUMNA
+		//Se abre espacio en memoria para la estructura que representa la columna
 		*Simbolos=(char**)malloc(numSimbolos*sizeof(char*));
-		//EN EL SEGUNDO ELEMENTO DEL ARRAY DE ESTADOS SE ASOCIA EL TAMAÑO TOTAL DEL ARREGLO DE SIMBOLOS
+		//En el segundo elemento del array de estados se asocia el tamño total del arreglo del simbolos
 		((*columnaEstados+1))->fila=(int*)malloc(sizeof(int));
 		*(((*columnaEstados)+1)->fila)=numSimbolos;
-		//DESAPILAMOS STACK PARA APILAR STACK2 Y SABER EL TAMAÑO DE CADA ESTADO
+		//Desapilamos stack para apilar stack2 y saber el tamaño de cada estado
 		x=0; 
 		while(es_vaciaPila(Stack)!=1){
-			//QUE CANTIDAD DE CARACTERES HAY EN UN ESTADO
+			//Que cantidad de carácteres hay un estado
 			tamSimbolo=IntercambiarPilas(Stack, Stack2);
 			(*((*Simbolos)+((numSimbolos-x)-1)))=(char*)malloc((tamSimbolo+1)*sizeof(char));
 			x++;
 		}
-		//EN ESTE PUNTO YA SE APILO A STACK2 QUE ESTA EN EL ORDEN ADECUADO
-		//SE COMIENZA A GUARDAR LOS CARACTERES
-		//DOS ITERADORES: UNO QUE OPERE SOBRE EL ARREGLO DE ESTRUCTURAS Y EL OTRO SOBRE LAS
-	//CADENA DE CARACTERES INDIVIDUALES DE CADA STRUCT
+		//En este punto ya se apilo a stack2 que esta en el orden adecuado
+		//Se comienza a guardar los caracteres
+		//Dos iteradores: uno que opere sobre el arreglo de estructuras y el otro sobre las cadena de caracteres individuales de cada struct
 		numSimbolos=0;
 		x=0;
 		while(es_vaciaPila(Stack2)!=1){
 			letra=desapilar(Stack2);
 			if(letra==44){
-				//SE COMIENZA OTRA CADENA
+				//Si detecta una , se comienza otra cadena
 				*((*((*Simbolos)+numSimbolos))+x)='\0';
 				x=0;
 				numSimbolos++;
 			}else{
+        /* Se agrega el caracter al simbolo */
 				*((*((*Simbolos)+numSimbolos))+x)=letra;
 				x++;
 			}
+      /* Se agrega caracter nulo al final de lo que nos quedamos */
 			if(es_vaciaPila(Stack2)==1)
 				*((*((*Simbolos)+numSimbolos))+x)='\0';
 		}
+
+    /* Liberamos memoria de las estructuras utilizadas */
 		free(Stack);
 		free(Stack2);
 		break;
 	case 219: //Estados iniciales
-		char *estadoIni, *aux;
 		Stack=CrearPila();
 		Stack2=CrearPila();
 		//Se inserta el estado en la pila Stack
@@ -389,13 +400,12 @@ int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolo
 		aux=(*columnaEstados)->estado;
 		(*columnaEstados)->estado=((*columnaEstados)+x)->estado;
 		((*columnaEstados)+x)->estado=aux;
+    /* Liberamos memoria de las estructuras utilizadas */
 		free(Stack);
 		free(Stack2);
 		free(estadoIni);
 		break;
 	case 195: //Estados de acepatcion
-		int EstadoBuscado;
-		char *estadoAceptacion;
 		Stack=CrearPila();
 		Stack2=CrearPila();
 		//Se inserta toda la fila de estados de aceptación en la pila Stack
@@ -424,17 +434,15 @@ int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolo
 
 		}
 		AbrirEspacioFilas(columnaEstados, *(((*columnaEstados)+1)->fila), *(((*columnaEstados))->fila));
+    /* Liberamos memoria de las estructuras utilizadas */
 		free(Stack);
 		free(Stack2);
 		free(estadoAceptacion);
 		break;
 	case 204: //Función delta
-	char *EstadoAct;
-	Pila *Stack3, *Stack4;
-	int iterador, posSimbolo, posEstado, contador=0;
-	long posicionInicial = ftell(archivo);
-	int numLineas = 0;
-    int caracterActual;
+	contador=0;
+	posicionInicial = ftell(archivo);
+	numLineas = 0;
 
     // Usa un bucle para contar las líneas restantes sin avanzar la posición
     while ((caracterActual = fgetc(archivo)) != EOF) {
@@ -512,6 +520,7 @@ int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolo
 				*(*((((*columnaEstados)+posEstado)->filaEst)+posSimbolo)+iterador)='\0';
 		}
 		contador++;
+    /* Liberamos memoria de las estructuras utilizadas */
 		free(Stack);
 		free(Stack2);
 		free(Stack3);
@@ -570,10 +579,10 @@ char desapilar(Pila *S){
 }
 
 /* 
-  Función para...
+  Función para guardar temporalmente información en una pila
   Argumentos:
     - archivo: descriptor del archivo de lectura
-    - Stack: 
+    - Stack: adjuntar información de línea
  */
 int insertarFilaEnPila(FILE *archivo, Pila *Stack){
 	int codigo=1, numEstados=1;
