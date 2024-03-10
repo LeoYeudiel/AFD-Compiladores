@@ -276,19 +276,10 @@ void navegar(FILE *archivo, int *codigo, Estados **columnaEstados, char ***Simbo
     - Simbolos: Guarda todo el alfabeto aqui
  */
 int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolos){
-	char letra;
-	int i;
-	Pila *Stack, *Stack2;
-	int numEstados, x=0, tamEstado, numSimbolos, tamSimbolo;
-  char *estadoIni, *aux;
-  int EstadoBuscado;
-	char *estadoAceptacion;
-  char *EstadoAct;
-	Pila *Stack3, *Stack4;
-	int iterador, posSimbolo, posEstado, contador;
+	char letra, *estadoIni, *aux, *estadoAceptacion, *EstadoAct;
+	int i, numEstados, x = 0, tamEstado, numSimbolos, tamSimbolo, EstadoBuscado, iterador, posSimbolo, posEstado, contador, numLineas, caracterActual;
+	Pila *Stack, *Stack2, *Stack3, *Stack4;
 	long posicionInicial;
-	int numLineas;
-  int caracterActual;
 	switch (codigo){
 	case 207: //Estados
 		Stack=CrearPila();
@@ -382,21 +373,23 @@ int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolo
 		Stack2=CrearPila();
 		//Se inserta el estado en la pila Stack
 		insertarFilaEnPila(archivo, Stack);
-		//DESAPILAMOS STACK PARA APILAR STACK2 Y SABER EL TAMAÑO DEL ESTADO
-		//CANTIDAD DE CARACTERES EN EL ESTADO
+		//Desapilamos stack para apilar stack2 y saber el tamaño del estado
+		//Cantidad de caracteres en el estado
 		tamEstado=IntercambiarPilas(Stack, Stack2);
 		estadoIni=(char*)malloc((tamEstado+1)*sizeof(char));
 		//SE DESAPILA STACK2 Y LOS CARACTERES SON GUARDADOS EN estadoIni
 		x=0; 
+    /* Adjuntamos toda la información de los estados iniciales */
 		while(es_vaciaPila(Stack2)!=1){
 			letra=desapilar(Stack2);
 			*(estadoIni+x)=letra;
 			x++;
-			
 		}
+    /* Agregamos el caracter nulo para saber que terminamos una cadena */
 		*(estadoIni+x)='\0';
+    /* Verificamos si existe el estado */
 		x=busquedaEstado(columnaEstados, estadoIni, *((*columnaEstados)->fila));
-		//ES INTERCAMBIADO EL ESTADO DE LA PRIMERA FILA CON EL ESTADO INICIAL CORREPONDIENTE
+		//Es intercambiado el estado de la primera fila con el estado inicial correspondiente
 		aux=(*columnaEstados)->estado;
 		(*columnaEstados)->estado=((*columnaEstados)+x)->estado;
 		((*columnaEstados)+x)->estado=aux;
@@ -405,34 +398,35 @@ int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolo
 		free(Stack2);
 		free(estadoIni);
 		break;
-	case 195: //Estados de acepatcion
+	case 195: //Estados de aceptacion
 		Stack=CrearPila();
 		Stack2=CrearPila();
 		//Se inserta toda la fila de estados de aceptación en la pila Stack
 		insertarFilaEnPila(archivo, Stack);
 		
 		while(es_vaciaPila(Stack)!=1){
-			//QUE CANTIDAD DE CARACTERES HAY EN UN ESTADO ESPECIFICO
-			//DESAPILAMOS STACK PARA APILAR STACK2 Y SABER EL TAMAÑO DE CADA ESTADO
+			//Que cantidad de caracteres hay en un estado especifico
+			//Desapilamos stack para apilar stack2 y saber el tamaño de cada estado
 			tamEstado=IntercambiarPilas(Stack, Stack2);
 			estadoAceptacion=(char*)malloc((tamEstado+1)*sizeof(char));
 			x=0;
-			//EN STACK2 SE ENCUENTRA EL ESTADO ACTUAL
+			//En stack2 se encuentra el esado actual
 			while(es_vaciaPila(Stack2)!=1){
 				letra=desapilar(Stack2);
+        /* En caso de detectar una , pasamos a la siguiente */
 				if(letra!=44){
 					*(estadoAceptacion+x)=letra;
 					x++;
 				}
 				if(es_vaciaPila(Stack2)==1){
-					//SE TIENE A UN ESTADO COMPLETO, AHORA SE BUSCA PARA SEÑALAR QUE ES ESTADO DE ACEPTACION
+					//Se tiene a un estado completo, ahora se busca para señalar que es estado aceptación
 					*(estadoAceptacion+x)='\0';
 					EstadoBuscado=busquedaEstado(columnaEstados, estadoAceptacion, *((*columnaEstados)->fila));
 					((*columnaEstados)+EstadoBuscado)->aceptacion=1;
 				}
 			}
-
 		}
+    /* Apartamos memoria para generar las filas por cada simbolo que tenemos */
 		AbrirEspacioFilas(columnaEstados, *(((*columnaEstados)+1)->fila), *(((*columnaEstados))->fila));
     /* Liberamos memoria de las estructuras utilizadas */
 		free(Stack);
@@ -441,6 +435,7 @@ int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolo
 		break;
 	case 204: //Función delta
 	contador=0;
+  /* Obtenemos la posición actual de lectura del archivo */
 	posicionInicial = ftell(archivo);
 	numLineas = 0;
 
@@ -450,6 +445,7 @@ int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolo
             numLineas++;
         }
     }
+    /* Porque consideramos 2 líneas para la transiciones de un estado */
 	numLineas=numLineas/2;
     // Restaura la posición original
     fseek(archivo, posicionInicial, SEEK_SET);
@@ -462,9 +458,11 @@ int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolo
 		tamEstado=IntercambiarPilas(Stack3, Stack4);
 		EstadoAct=(char*)malloc(tamEstado*sizeof(char));
 		x=0; 
+    /* Recolectamos el estado que vamos ver su tabla de transiciones */
 		while(es_vaciaPila(Stack4)!=1){
 			letra=desapilar(Stack4);
 			codigo=letra;
+      /* En caso de que encuentre : pasamos a lo siguiente */
 			if(codigo!=58){
 				*(EstadoAct+x)=letra;
 				x++;
@@ -473,14 +471,15 @@ int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolo
 		*(EstadoAct+x)='\0';
 		//posEstado es posicion en la que se encuentra el estado buscado
 		posEstado=busquedaEstado(columnaEstados, EstadoAct, *((*columnaEstados)->fila));
+    /* Liberamos memoria */
 		free(EstadoAct);
-		//SE LEE LA SIGUIENTE LINEA QUE CORRESPONDE A LAS TRANSICIONES
+		//Se lee la siguiente linea que corresponde a las transiciones
 		insertarFilaEnPila(archivo, Stack3);
-		//STACK 3 CONTIENE LA INFORMACION DE TRANSICION DE UN ESTADO EN PARTICULAR
+		//Stack3 contiene la información de transición de un estado en particular
 		while(es_vaciaPila(Stack3)!=1){
-				//SE ELIMINAN PARENTESIS (SON LAS FUNCIONES DELTA)
-				IntercambiarPilas(Stack3, Stack4);//STACK4 OBTIENE LAS FUNCIONES TRANSICION
-				tamSimbolo=IntercambiarPilasDelta(Stack4, Stack);//SE QUITA LA PARTE DEL SIMBOLO DE LA FUNCION DELTA
+				//Se eliminan parentesis (son las funciones delta)
+				IntercambiarPilas(Stack3, Stack4);//Stack4 obtiene las funciones transición
+				tamSimbolo=IntercambiarPilasDelta(Stack4, Stack);//Se quita la parte del simbolo de la función delta
 				//(EN STACK4 SE QUEDA EL ESTADO, EN STACK SE QUEDA EL SIMBOLO)
 				
 				//CADENA DE CARACTERES QUE CONTIENE EL SIMBOLO CORRESPONDIENTE
@@ -603,10 +602,10 @@ int insertarFilaEnPila(FILE *archivo, Pila *Stack){
 }
 
 /*
-  Función que regresa el tamaño de un estado particular. Lo hace cuando encuentra una , o se ha vaciado la pila
+  Función que regresa el tamaño de un estado particular. Lo hace cuando encuentra una , o se ha vaciado la pila e incluso cambia el orden 
   Argumentos:
-    - Stack1:
-    - Stack2:
+    - Stack1: pila que tiene la información
+    - Stack2: pila a la que se guarda la información con el orden correcto
   */
 int IntercambiarPilas(Pila *Stack1, Pila *Stack2){
 	char letra;
@@ -648,20 +647,36 @@ int IntercambiarPilasDelta(Pila *Stack1, Pila *Stack2){
 	}
 }
 
+/* 
+  Función para comparar cadenas caracter a caracter
+  Argumentos:
+    - cadena1: primera cadena de caracteres a comparar
+    - cadena2: segunda cadena de caracteres a comparar
+*/
 int compararCadenas(char *cadena1, char *cadena2){
 	char letra1=cadena1[0], letra2=cadena2[0];
 	int x=0;
+  /* Leemos hasta el carácter nulo */
 	while(letra1 != '\0'){
 		letra1=cadena1[x];
 		letra2=cadena2[x];
+    /* En caso de que sea diferente se retorna un 0 */
 		if(letra1 != letra2)
 			return 0;
 		x++;
 	}
+  /* En caso de que haya terminado, retornamos un 1 */
 	if (letra1==letra2)
 		return 1;
 }
 
+/* 
+  Función para verificar si el estado inicial pertenece a los estados que ya tenemos guardados
+  Argumentos:
+    - columnaEstados: estructura que contiene la información de los estados
+    - cadena: es el estado inicial a verificar si existe en los que hemos guardado
+    - numEstados: para saber cuantos estados estan guardados en la estructura
+ */
 int busquedaEstado(Estados **columnaEstados, char *cadena, int NumEstados){
 	int i, res;
 	for(i=0;i<NumEstados;i++){
@@ -685,12 +700,22 @@ int busquedaSimbolo(char ***Simbolos, char *cadena, int NumSimbolos){
 	printf("\n ERROR: No coinciden los simbolos \n");
 	exit(0);
 }
+
+/* 
+  Función para generar espacio de la filas para el estado de transiciones
+  Argumentos:
+    - columnaEstados: la estructura que contiene todos los estados
+    - numSimbolos: el número de simbolos que contiene nuestro alfabeto
+    - CantEstados: el número de estados que contiene el automata
+ */
 void AbrirEspacioFilas(Estados **columnaEstados, int numSimbolos, int CantEstados){
 	int i;
+  /* Generamos la espacio para cada estado */
 	for(i=0;i<CantEstados;i++){
 		((*columnaEstados)+i)->filaEst=(char**)malloc(numSimbolos*sizeof(char*));
 	}
 }
+
 Pila *CrearPila(){
 	Pila *S;
 	S=(Pila*)malloc(sizeof(Pila));
