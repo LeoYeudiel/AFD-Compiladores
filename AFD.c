@@ -1,15 +1,18 @@
+/* Librerías a utilizar */
 #include<stdio.h>
 #include<stdlib.h>
 #include <string.h>
 
-/*Observando la descripcíon del automáta en manera de tabla
+/*Declaración de Estructuras.
+
+Observando la descripcíon del automáta en manera de tabla
 La estructura Estados representa un estado asociado a una fila
 En cada fila se encuentra un array de elementos que describen al automata*/
 typedef struct Estados{
     char *estado;//puntero a una cadena de caracteres
     int *fila;
-	int aceptacion;
-	char **filaEst;
+	  int aceptacion;
+	  char **filaEst;
 }Estados;
 
 typedef struct Nodo_Pila{
@@ -21,6 +24,7 @@ typedef struct{
 	Nodo_Pila * tope;
 }Pila;
 
+/* Prototipos de funciones */
 int menuAfd(FILE *, int, Estados **, char ***);
 void navegar(FILE *, int *, Estados **, char ***);
 void comments(FILE *, int *, char);
@@ -42,11 +46,14 @@ int IntercambiarPilasDelta(Pila *, Pila *);
 int busquedaSimbolo(char ***, char *, int);
 Pila *CrearPila();
 int RecorridoAFD(Pila *, Estados *, char **);
+
 int main(int argc, char *argv[]){
+    /* Verificamos de que nos haya proprocionado el archivo donde viene el autómata con sus específicaciones  */
     if (argc != 2) {
         printf("Uso incorrecto. Debe proporcionar un nombre de archivo como argumento.\n");
         return 1;
     }
+    /* Abrimos el archivo en modo lectura */
     FILE *archivo;
     archivo=fopen(argv[1], "r");
     if(archivo==NULL){
@@ -54,79 +61,91 @@ int main(int argc, char *argv[]){
         fclose(archivo);
         return 1;
     }
-	char letra;
-	int codigo, i, NumEstados, numSimbolos, j, EstadoPos;
-	letra = fgetc(archivo);
-	codigo=letra;
-	Estados *columnaEstados=NULL;
-	//SIMBOLOS VA A SER UN ARREGLO DE PUNTEROS A CARACTERES
-	char **Simbolos=NULL;
+      
+    /* Declaramos variables para poder ir guardando información  */
+    char letra;
+    int codigo, i, NumEstados, numSimbolos, j, EstadoPos;
+    letra = fgetc(archivo);
+    codigo=letra;
+    Estados *columnaEstados=NULL;
+    //SIMBOLOS VA A SER UN ARREGLO DE PUNTEROS A CARACTERES
+    char **Simbolos=NULL;
     navegar(archivo, &codigo, &columnaEstados, &Simbolos); //Pasamos la dirección de memoria de los arrays
-	NumEstados = *(columnaEstados->fila);
-	numSimbolos = *((columnaEstados+1)->fila);
-	printf("\n === REPRESENTACION DEL AFD ===\n \n");
-	printf("       |   ");
-	for(i=0;i<numSimbolos;i++){
-		printf("%s    ", *(Simbolos+i));
-	}
-	printf("\n_ _ _ _ _ _ _ _ _ _ _ ");
-	for(i=0;i<NumEstados;i++){
-		printf("\n");
-		if(i==0){
-			if((columnaEstados+i)->aceptacion==1){
-				printf("-> *%s |", columnaEstados->estado);
-			}else{
-				printf("->  %s |", columnaEstados->estado);
-			}
-		}else{
-			if((columnaEstados+i)->aceptacion==1){
-				printf("   *%s |", (columnaEstados+i)->estado);
-			}else{
-				printf("   %s |", (columnaEstados+i)->estado);
-			}
-			
-		}
-		for(j=0;j<numSimbolos;j++){
-			printf("  %s", *(((columnaEstados+i)->filaEst)+j));
-		}
-		
-	}
-	printf("\n_ _ _ _ _ _ _ _ _ _ _ \n");
-	Pila *Stack, *Stack2;
-	Stack=CrearPila();
-	Stack2=CrearPila();
-	
-	printf("\n Inserta la cadena W: \n");
-	while((letra=getchar()) != '\n'){
-		apilar(Stack, letra);
-	}
-	IntercambiarPilas(Stack, Stack2);//OBTENEMOS LA CADENA ORIGINAL EN EL ORDEN CORRECTO
-	EstadoPos=0;
-	EstadoPos=RecorridoAFD(Stack2, columnaEstados, Simbolos);
-	if((columnaEstados+EstadoPos)->aceptacion==1){
-		printf("\n LA CADENA W SI PERTENECE AL LENGUAJE\n");
-	}else{
-		printf("\n LA CADENA W NO PERTENECE AL LENGUAJE\n");
-	}
-	free(columnaEstados->fila);
-	free((columnaEstados+1)->fila);
-	free(Stack);
-	free(Stack2);
-	free(columnaEstados);
-	free(Simbolos);
+    NumEstados = *(columnaEstados->fila);
+    numSimbolos = *((columnaEstados+1)->fila);
+    printf("\n === REPRESENTACION DEL AFD ===\n \n");
+    printf("       |   ");
+    for(i=0;i<numSimbolos;i++){
+      printf("%s    ", *(Simbolos+i));
+    }
+    printf("\n_ _ _ _ _ _ _ _ _ _ _ ");
+    for(i=0;i<NumEstados;i++){
+      printf("\n");
+      if(i==0){
+        if((columnaEstados+i)->aceptacion==1){
+          printf("-> *%s |", columnaEstados->estado);
+        }else{
+          printf("->  %s |", columnaEstados->estado);
+        }
+      }else{
+        if((columnaEstados+i)->aceptacion==1){
+          printf("   *%s |", (columnaEstados+i)->estado);
+        }else{
+          printf("   %s |", (columnaEstados+i)->estado);
+        }
+        
+      }
+      for(j=0;j<numSimbolos;j++){
+        printf("  %s", *(((columnaEstados+i)->filaEst)+j));
+      }
+      
+    }
+    printf("\n_ _ _ _ _ _ _ _ _ _ _ \n");
+    Pila *Stack, *Stack2;
+    Stack=CrearPila();
+    Stack2=CrearPila();
     
-    
+    printf("\n Inserta la cadena W: \n");
+    while((letra=getchar()) != '\n'){
+      apilar(Stack, letra);
+    }
+    IntercambiarPilas(Stack, Stack2);//OBTENEMOS LA CADENA ORIGINAL EN EL ORDEN CORRECTO
+    EstadoPos=0;
+    EstadoPos=RecorridoAFD(Stack2, columnaEstados, Simbolos);
+    if((columnaEstados+EstadoPos)->aceptacion==1){
+      printf("\n LA CADENA W SI PERTENECE AL LENGUAJE\n");
+    }else{
+      printf("\n LA CADENA W NO PERTENECE AL LENGUAJE\n");
+    }
+
+    /* Liberamos memoria */
+    free(columnaEstados->fila);
+    free((columnaEstados+1)->fila);
+    free(Stack);
+    free(Stack2);
+    free(columnaEstados);
+    free(Simbolos);
 }
 
+/* 
+  Función para la detección de un comentario del archivo de lectura
+  Argumentos:
+  - archivo: descriptor del archivo de lectura
+  - flag: bandera de que se haya puesto un comentario de bloque completo, tanto abierto y cerrado
+  - letra:
+ */
 void comments(FILE *archivo, int *flag, char letra){
+  /* Detectamos el patron de un comentario de bloque */
 	if(letra=='/'){
 		letra=fgetc(archivo);
     		if(letra=='*'){
+          /* Leemos hasta detectar el cierre del comentario */
     			while(feof(archivo)==0){
     				letra=fgetc(archivo);
     				if(letra=='*'){
     					letra=fgetc(archivo);
     					if(letra=='/'){
+                /* Una vez detectado, alzamos la bandera y volvemos a la función que llamo esta función */
     						letra=fgetc(archivo);
     						*flag=1;
     						return;
@@ -135,14 +154,20 @@ void comments(FILE *archivo, int *flag, char letra){
     			}
     		}
     }
-    	
+    /* En caso de no haber detectado ninguna de las condiciones anteriores, volvemos a la función que llamo esta función */
     	return;
 }
 
-
+/* 
+  Función para poder leer después de un salto de línea.
+  Argumentos:
+    - archivo: descriptor de archivo de lectura
+    - letra: carácter a analizar del archivo
+ */
 int deleteLines(FILE *archivo, char letra){
 	int codigo;
 	codigo=letra;
+  /* Leemos hasta leer un carácter diferente al salto de línea */
 	while ((letra = fgetc(archivo)) != EOF){
     	codigo=letra;
     	if(letra!=10)
@@ -152,6 +177,14 @@ int deleteLines(FILE *archivo, char letra){
 	return codigo;
 }
 
+/* 
+  Función para...
+  Argumentos:
+    - archivo: descriptor de archivo de lectura
+    - letra: carácter a analizar
+    - columnaEstados:
+    - Simbolos
+*/
 int operaciones(FILE *archivo, char letra, Estados **columnaEstados, char ***Simbolos){
 	int codigo, i;
 	codigo=letra;//Ya se tiene la primer letra leida
@@ -161,12 +194,18 @@ int operaciones(FILE *archivo, char letra, Estados **columnaEstados, char ***Sim
 	}
 	for(i=0;i<2;i++){
 		letra=fgetc(archivo);
-		
 	}
+
 	codigo=menuAfd(archivo, codigo, columnaEstados, Simbolos);//Se espera que menuAfd lea el primer elemento de los conjuntos
 	return codigo;
 }
 
+/* 
+  Función para seguir la lectura en caso de la detección de un comentario
+  Argumentos:
+  - archivo: descriptor del archivo a leer
+  - letra: carácter del cual se está leyendo
+ */
 char saltoComentarios(FILE *archivo, char letra){
 	int flag, codigo;
 	flag=0;
@@ -177,37 +216,64 @@ char saltoComentarios(FILE *archivo, char letra){
     }
     codigo=letra;
 	return codigo;
-
 }
 
+/* 
+  Función para la lectura del archivo
+  Argumentos:
+  - archivo: descriptor del archivo a leer
+  - código:
+  - columnaEstados:
+  - Símbolos:
+ */
 void navegar(FILE *archivo, int *codigo, Estados **columnaEstados, char ***Simbolos){
     char letra;
-	letra=(char)(*codigo);
+	  letra=(char)(*codigo);
+    /* Realizamos un ciclo para la lectura de todo el archivo */
     while(feof(archivo)==0){
+      /* Actualizamos la posición de lectura en caso de la lectura de un comentario en el archivo */
+      *codigo=saltoComentarios(archivo, letra);
+      letra=(char)(*codigo);
+      /* En caso de detectar una barra diagonal volvemos a verificar si hay otro comentario */
+      if(*codigo==47){
+        navegar(archivo, codigo, columnaEstados, Simbolos);
+      }
 
-    	*codigo=saltoComentarios(archivo, letra);
-    	letra=(char)(*codigo);
-		if(*codigo==47){
-			navegar(archivo, codigo, columnaEstados, Simbolos);
-		}
-		if(*codigo<0)
-			return;
-   		if(*codigo==10){
-			letra=(char)(*codigo);
-			*codigo=deleteLines(archivo, letra);//recibo el nuevo codigo, lo que haya después de los saltos de linea
-			navegar(archivo, codigo, columnaEstados, Simbolos);
-			if(*codigo<0)
-				return;
-   		}else{
-			*codigo=operaciones(archivo, letra, columnaEstados, Simbolos);//Se le manda la letra con la que comienza la siguiente operacion
-			if(*codigo<=0)
-				return;
-		}	
-		navegar(archivo, codigo, columnaEstados, Simbolos);
-		if(*codigo<=0)
-				return;
+      /* Si no hemos recibido un carácter, retornamos valor */
+      if(*codigo<0)
+        return;
+      
+      /* En caso de detectar saltos de línea */
+      if(*codigo==10){
+        letra=(char)(*codigo);
+        *codigo=deleteLines(archivo, letra);//recibo el nuevo codigo, lo que haya después de los saltos de linea
+        /* Volvemos a leer para poder verificar más del archivo */
+        navegar(archivo, codigo, columnaEstados, Simbolos);
+        /* En caso si ya no hemos recibido un carácter, retornamos valor */
+        if(*codigo<0)
+          return;
+          /* Caso contrario identificamos que parte del autómata es */
+      }else{
+        *codigo=operaciones(archivo, letra, columnaEstados, Simbolos);//Se le manda la letra con la que comienza la siguiente operacion
+        /* En caso si ya no hemos recibido un carácter, retornamos valor */
+        if(*codigo<=0)
+          return;
+      }	
+      /* Volvemos a leer para la detección de algún otro carácter que se nos haya pasado */
+      navegar(archivo, codigo, columnaEstados, Simbolos);
+      /* En caso si ya no hemos recibido un carácter, retornamos valor */
+      if(*codigo<=0)
+          return;
     }
 }
+
+/* Función para...
+  Argumentos:
+    - archivo: descriptor del archivo de lectura
+    - codigo: detección del tipo de información a considerar
+    - columnaEstados: estructura que contiene la tabla de transciones
+    - Simbolos:
+ */
 int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolos){
 	char letra;
 	int i;
@@ -215,35 +281,34 @@ int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolo
 	int numEstados, x=0, tamEstado;
 	switch (codigo){
 	case 207: //Estados
-		
 		Stack=CrearPila();
 		Stack2=CrearPila();
-		//Se inserta toda la fila en la pila Stack
+		//Se cuenta el número de estados del autómata
 		numEstados=insertarFilaEnPila(archivo, Stack);
-		//SE ABRE ESPACIO EN MEMORIA PARA LA ESTRUCTURA QUE REPRESENTA LA COLUMNA
+		//Se abre espacio en memoria para la estructura que representa la columna de estados
 		*columnaEstados=(Estados*)malloc(numEstados*sizeof(Estados));
-		//EN EL PRIMER ELEMENTO DEL ARRAY DE ESTADOS SE ASOCIA EL TAMAÑO TOTAL DEL ARREGLO
+		//En el primer elemento del array de estados se asocia el tamaño total del arreglo
 		(*columnaEstados)->fila=(int*)malloc(sizeof(int));
 		*((*columnaEstados)->fila)=numEstados;
-		//DESAPILAMOS STACK PARA APILAR STACK2 Y SABER EL TAMAÑO DE CADA ESTADO 
+		//Desapilamos stack para apilar stack2 y saber el tamaño de cada estado (creación de la matriz)
 		x=0;
 		while(es_vaciaPila(Stack)!=1){
-			//QUE CANTIDAD DE CARACTERES HAY EN UN ESTADO
+			//Que cantidad de caracteres hay en un estado
 			tamEstado=IntercambiarPilas(Stack, Stack2);
 			((*columnaEstados)+((numEstados-x)-1))->estado=(char*)malloc((tamEstado+1)*sizeof(char));
 			x++;
 		}
 		
-		//EN ESTE PUNTO YA SE APILO A STACK2 QUE ESTA EN EL ORDEN ADECUADO
-		//SE COMIENZAN A GUARDAR LOS CARACTERES
-		//x=0 ITERADOR SOBRE CADENA
-		//numEstados=0 ITERADOR SOBRE STRUCTS
+		//En este punto ya se apiló a stack2 que esta en el orden adecuado
+		//Se comienzan a guardar los caracteres
+		//x=0 iterador sobre la cadena
+		//numEstados=0 Iterador sobre structs
 		numEstados=0;
 		x=0;
 		while(es_vaciaPila(Stack2)!=1){
 			letra=desapilar(Stack2);
 			if(letra==44){
-				//SE COMIENZA OTRA CADENA
+				//Se comienza otra cadena
 				*((((*columnaEstados)+numEstados)->estado)+(x))='\0';
 				(((*columnaEstados)+numEstados)->aceptacion)=0;
 				numEstados++;
@@ -253,6 +318,7 @@ int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolo
 				x++;
 			}
 		}
+    /* Liberamos memoria de las estructuras utilizadas */
 		free(Stack);
 		free(Stack2);
 		break;
@@ -480,7 +546,6 @@ Nodo_Pila * crearNodoPila(){
 }
 
 // AGREGAR ELEMENTOS A LA PILA
-
 void apilar(Pila *S, char caracter){
         Nodo_Pila * nvo;
         nvo = crearNodoPila();	
@@ -490,7 +555,6 @@ void apilar(Pila *S, char caracter){
 }
 
 // ELIMINAR UN ELEMENTO DE LA PILA
-
 char desapilar(Pila *S){
 	char caracter;
     Nodo_Pila *aux;
@@ -504,15 +568,23 @@ char desapilar(Pila *S){
 	return caracter;
 }
 
+/* 
+  Función para...
+  Argumentos:
+    - archivo: descriptor del archivo de lectura
+    - Stack: 
+ */
 int insertarFilaEnPila(FILE *archivo, Pila *Stack){
 	int codigo=1, numEstados=1;
 	char letra;
+  /* Mientra no sea una salto de línea se lee la información */
 	while(codigo!=10){
 			letra=fgetc(archivo);
 			codigo=letra;
 			if(codigo!=32 && codigo!=10){
 				apilar(Stack, letra);
 			}
+      /* En caso de leer una , se añade el contador del número de estados a considerar en cuenta */
 			if(codigo==44){
 				numEstados++;
 			}
@@ -520,8 +592,12 @@ int insertarFilaEnPila(FILE *archivo, Pila *Stack){
 	return numEstados;
 }
 
-/*REGRESA EL TAMAÑO DE UN ESTADO PARTICULAR.
-LO HACE CUANDO ENCUENTRA UNA , O SE HA VACIADO LA PILA*/
+/*
+  Función que regresa el tamaño de un estado particular. Lo hace cuando encuentra una , o se ha vaciado la pila
+  Argumentos:
+    - Stack1:
+    - Stack2:
+  */
 int IntercambiarPilas(Pila *Stack1, Pila *Stack2){
 	char letra;
 	int codigo, tamEstado=0, x=0;
