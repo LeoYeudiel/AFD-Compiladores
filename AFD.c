@@ -239,9 +239,9 @@ char saltoComentarios(FILE *archivo, char letra){
   Función para la lectura del archivo
   Argumentos:
   - archivo: descriptor del archivo a leer
-  - código:
-  - columnaEstados:
-  - Símbolos:
+  - código: letra o carácter que vamos analizando
+  - columnaEstados: estructura que contiene la información de los estados
+  - Símbolos: contiene todo nuestro alfabeto
  */
 void navegar(FILE *archivo, int *codigo, Estados **columnaEstados, char ***Simbolos){
     char letra;
