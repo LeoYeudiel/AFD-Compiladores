@@ -480,11 +480,11 @@ int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolo
 				//Se eliminan parentesis (son las funciones delta)
 				IntercambiarPilas(Stack3, Stack4);//Stack4 obtiene las funciones transición
 				tamSimbolo=IntercambiarPilasDelta(Stack4, Stack);//Se quita la parte del simbolo de la función delta
-				//(EN STACK4 SE QUEDA EL ESTADO, EN STACK SE QUEDA EL SIMBOLO)
+				//(En stack4 se queda el estado, en stack3 se queda el simbolo)
 				
-				//CADENA DE CARACTERES QUE CONTIENE EL SIMBOLO CORRESPONDIENTE
+				//Cadena de caracteres que contiene el simbolo correspondiente
 				EstadoAct=(char*)malloc((tamSimbolo+1)*sizeof(char));
-				IntercambiarPilas(Stack, Stack2);//STACK QUEDA VACÍA Y STACK2 CONTIENE EL ORDEN CORRECTO DE LA CADENA(simbolo)
+				IntercambiarPilas(Stack, Stack2);//Stack queda vacía y stack2 contiene el orden correcto de la cadena (simbolo)
 				//SE LLENA LA CADENA DE CARACTERES
 				iterador=0;
 				while(es_vaciaPila(Stack2)!=1){
@@ -627,6 +627,12 @@ int IntercambiarPilas(Pila *Stack1, Pila *Stack2){
 	}
 }
 
+/* 
+  Función para apilar y devolver el tamaño del estado
+  Argumentos:
+    - Stack1: Primera pila donde sacaremos información
+    - Stack2: Segunda pila que meteremos la información
+ */
 int IntercambiarPilasDelta(Pila *Stack1, Pila *Stack2){
 	char letra;
 	int codigo, tamEstado=0, x=0;
@@ -637,6 +643,12 @@ int IntercambiarPilasDelta(Pila *Stack1, Pila *Stack2){
 				apilar(Stack2, letra);
 				tamEstado++;
 			}else if(codigo==45){
+        letra = desapilar(Stack1);
+        codigo = letra;
+        if(codigo==45){
+          apilar(Stack2, letra);
+          tamEstado++;
+        }
 				return tamEstado;
 			}
 			//El caso en el que se inserta el primer estado
