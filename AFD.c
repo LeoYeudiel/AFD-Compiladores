@@ -77,30 +77,30 @@ int main(int argc, char *argv[]){
     numSimbolos = *((columnaEstados+1)->fila);
     /* Imprimimos la tabla de transiciones del automata */
     printf("\n === REPRESENTACION DEL AFD ===\n \n");
-    printf("       |     ");
+    printf("         |");
     /* Imprimimos la primera fila que contiene los simbolos */
     for(i=0;i<numSimbolos;i++){
-      printf("%s     ", *(Simbolos+i));
+      printf("%8s", *(Simbolos+i));
     }
     printf("\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _");
     for(i=0;i<NumEstados;i++){
       printf("\n");
       if(i==0){
         if((columnaEstados+i)->aceptacion==1){
-          printf("-> *%s |", columnaEstados->estado);
+          printf("-> *%4s |", columnaEstados->estado);
         }else{
-          printf("->  %s |", columnaEstados->estado);
+          printf("->  %4s |", columnaEstados->estado);
         }
       }else{
         if((columnaEstados+i)->aceptacion==1){
-          printf("   *%s |", (columnaEstados+i)->estado);
+          printf("   *%4s |", (columnaEstados+i)->estado);
         }else{
-          printf("    %s |", (columnaEstados+i)->estado);
+          printf("    %4s |", (columnaEstados+i)->estado);
         }
         
       }
       for(j=0;j<numSimbolos;j++){
-        printf("    %s", *(((columnaEstados+i)->filaEst)+j));
+        printf("    %4s", *(((columnaEstados+i)->filaEst)+j));
       }
       
     }
