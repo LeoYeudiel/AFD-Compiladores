@@ -1,0 +1,79 @@
+/*
+============= OMAR REDONDO GONZALEZ =============
+============= LEO YEUDIEL PIÑA RAMÍREZ =============
+============= CÉSAR ALEJANDRO LECHUGA CERVANTES =============
+----------- ESCOM-IPN INGENIERÍA EN SISTEMAS COMPUTACIONALES -----------
+----------- COMPILADORES -----------
+============= DESCRIPCIÓN DE UN AUTOMÁTA FINITO DETERMINISTA =============
+----- AUTÓMATA QUE ACEPTA NÚMEROS ENTEROS O REALES CON O SIN SIGNO -----
+*/
+
+
+/*INSERTA LOS ESTADOS DEL AUTÓMATA. ES NECESARIO ESCRIBIR "EEE:" PARA ESPECIFICAR QUE A CONTINUACIÓN VIENEN LOS ESTADOS.
+EJEMPLO:
+
+EEE:
+q1, q2, q3, q4, q5, q123
+*/
+
+EEE:
+q0, q1, q2, q3, q4, q_1
+
+
+
+/*INSERTA EL ALFABETO DEL AUTOMATA. ESCRIBE "SSS:" PARA ESPECIFICAR QUE A CONTINUACION VIENE EL ALFABETO
+EJEMPLO:
+
+SSS:
+a, b, c, d
+*/
+
+SSS:
+0, 1, 2, 3, 4, 5, 6, 7, 8, 9, m, n, p
+
+/*INSERTA EL ESTADO INICIAL. ESCRIBE "III:" PARA ESPECIFICAR QUE A CONTINUACION VIENE EL ESTADO INICIAL
+EJEMPLO:
+
+III:
+q123
+*/
+
+III:
+q0
+
+/*
+INSERTA LOS ESTADOS DE ACEPTACION. ESCRIBE "AAA:" PARA ESPECIFICAR QUE A CONTINUACION VIENEN LOS ESTADOS DE ACEPTACION
+EJEMPLO:
+
+AAA:
+a1, a2, a3, a5
+*/
+
+AAA:
+q1, q4
+
+/*
+INSERTA LA FUNCION DELTA. ESCRIBE "DDD:" PARA ESPECIFICAR QUE A CONTINUACION VIENE LA FUNCION DELTA
+DESPUÉS COLOCA ENTRE PARÉNTESIS LAS FUNCIONES DELTA SEPARADAS POR COMAS
+estado:
+(simbolo-estado), (simbolo2-estado2)
+EJEMPLO:
+
+DDD:
+q1:
+(1-q2), (0-q1)
+*/ 
+
+DDD:
+q0:
+(0-q1), (1-q1), (2-q1), (3-q1), (4-q1), (5-q1), (6-q1), (7-q1), (8-q1), (9-q1), (m-q2), (n-q2), (p-q3)
+q1:
+(0-q1), (1-q1), (2-q1), (3-q1), (4-q1), (5-q1), (6-q1), (7-q1), (8-q1), (9-q1), (m-q_1), (n-q_1), (p-q3)
+q2:
+(0-q1), (1-q1), (2-q1), (3-q1), (4-q1), (5-q1), (6-q1), (7-q1), (8-q1), (9-q1), (m-q_1), (n-q_1), (p-q3)
+q3:
+(0-q4), (1-q4), (2-q4), (3-q4), (4-q4), (5-q4), (6-q4), (7-q4), (8-q4), (9-q4), (m-q_1), (n-q_1), (p-q_1)
+q4:
+(0-q4), (1-q4), (2-q4), (3-q4), (4-q4), (5-q4), (6-q4), (7-q4), (8-q4), (9-q4), (m-q_1), (n-q_1), (p-q_1)
+q_1:
+(0-q_1), (1-q_1), (2-q_1), (3-q_1), (4-q_1), (5-q_1), (6-q_1), (7-q_1), (8-q_1), (9-q_1), (m-q_1), (n-q_1), (p-q_1)
