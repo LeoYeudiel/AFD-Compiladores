@@ -69,9 +69,10 @@ int main(int argc, char *argv[]){
     letra = fgetc(archivo);
     codigo=letra;
     Estados *columnaEstados=NULL;
-    //SIMBOLOS VA A SER UN ARREGLO DE PUNTEROS A CARACTERES
+    //Simbolos va a ser un arreglo de punteros a caracteres
     char **Simbolos=NULL;
     navegar(archivo, &codigo, &columnaEstados, &Simbolos); //Pasamos la dirección de memoria de los arrays
+    /*  */
     NumEstados = *(columnaEstados->fila);
     numSimbolos = *((columnaEstados+1)->fila);
     printf("\n === REPRESENTACION DEL AFD ===\n \n");
@@ -268,7 +269,7 @@ void navegar(FILE *archivo, int *codigo, Estados **columnaEstados, char ***Simbo
     }
 }
 
-/* Función para...
+/* Función para leer todas la información de un automata
   Argumentos:
     - archivo: descriptor del archivo de lectura
     - codigo: detección del tipo de información a considerar
@@ -496,7 +497,7 @@ int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolo
 				//Se busca un simbolo igual al que tiene EstadoAct
 				posSimbolo=busquedaSimbolo(Simbolos, EstadoAct, *(((*columnaEstados)+1)->fila));
 				//printf("\n Posicion del simbolo: %d \n", posSimbolo);
-				//SE LEE EL ESTADO AL QUE DEBE DIRIGIRSE QUE SE ENCUENTRA EN STACK4
+				//Se lee el estado al que debe dirigirse que se encuentra en stack4
 				free(EstadoAct);
 				iterador=0;
 				while(es_vaciaPila(Stack4)!=1){
@@ -507,7 +508,7 @@ int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolo
 					}
 					iterador++;
 				}
-				//Stack4 QUEDA VACIA (SE ACABA DE TERMINAR UNA FUNCION TRANSICION)
+				//Stack4 queda vacía (se acaba de terminar una función transición) 
 				*((((*columnaEstados)+posEstado)->filaEst)+posSimbolo)=(char*)malloc(iterador*sizeof(char));
 				IntercambiarPilas(Stack, Stack2);
 				iterador=0;
@@ -648,6 +649,8 @@ int IntercambiarPilasDelta(Pila *Stack1, Pila *Stack2){
         if(codigo==45){
           apilar(Stack2, letra);
           tamEstado++;
+        }else{
+          apilar(Stack1, letra);
         }
 				return tamEstado;
 			}
@@ -702,7 +705,11 @@ int busquedaEstado(Estados **columnaEstados, char *cadena, int NumEstados){
 }
 
 /* 
-  Función 
+  Función para verificar si existe ese simbolo en el alfabeto
+  Argumentos:
+    - Simbolos: contiene todos los simbolos del alfabeto
+    - cadena: contiene el simbolo a comparar
+    - numSimbolos: cantidad de simbolos guardados en el alfabeto
  */
 int busquedaSimbolo(char ***Simbolos, char *cadena, int NumSimbolos){
 	int i, res;
