@@ -485,7 +485,7 @@ int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolo
 				//Cadena de caracteres que contiene el simbolo correspondiente
 				EstadoAct=(char*)malloc((tamSimbolo+1)*sizeof(char));
 				IntercambiarPilas(Stack, Stack2);//Stack queda vacía y stack2 contiene el orden correcto de la cadena (simbolo)
-				//SE LLENA LA CADENA DE CARACTERES
+				//Se llena la cadena de caracteres
 				iterador=0;
 				while(es_vaciaPila(Stack2)!=1){
 					letra=desapilar(Stack2);
@@ -493,7 +493,7 @@ int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolo
 					iterador++;
 				}
 				*(EstadoAct+iterador)='\0';
-				//SE BUSCA UN SIMBOLO IGUAL AL QUE TIENE EstadoAct
+				//Se busca un simbolo igual al que tiene EstadoAct
 				posSimbolo=busquedaSimbolo(Simbolos, EstadoAct, *(((*columnaEstados)+1)->fila));
 				//printf("\n Posicion del simbolo: %d \n", posSimbolo);
 				//SE LEE EL ESTADO AL QUE DEBE DIRIGIRSE QUE SE ENCUENTRA EN STACK4
@@ -701,6 +701,9 @@ int busquedaEstado(Estados **columnaEstados, char *cadena, int NumEstados){
 	exit(0);
 }
 
+/* 
+  Función 
+ */
 int busquedaSimbolo(char ***Simbolos, char *cadena, int NumSimbolos){
 	int i, res;
 	for(i=0;i<NumSimbolos;i++){
