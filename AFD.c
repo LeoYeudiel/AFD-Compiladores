@@ -399,7 +399,7 @@ int menuAfd(FILE *archivo, int codigo, Estados **columnaEstados, char ***Simbolo
 		Stack2=CrearPila();
 		//Se inserta toda la fila de estados de aceptación en la pila Stack
 		insertarFilaEnPila(archivo, Stack);
-		 
+		
 		while(es_vaciaPila(Stack)!=1){
 			//QUE CANTIDAD DE CARACTERES HAY EN UN ESTADO ESPECIFICO
 			//DESAPILAMOS STACK PARA APILAR STACK2 Y SABER EL TAMAÑO DE CADA ESTADO
