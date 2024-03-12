@@ -108,17 +108,25 @@ int main(int argc, char *argv[]){
     Pila *Stack, *Stack2;
     int x = atoi(argv[2]), y = 0;
     char *cadena;
+    
+    cadena = (char*)malloc(sizeof(char) * 200);
     while(x){
       Stack= CrearPila();
       Stack2=CrearPila();
       y = 0;
       printf("\n Inserta la cadena W: \n");
-      scanf("%[^\n]", cadena);
-      printf("\tDe la cadena %s ", cadena);
-      while(cadena[y] != '\0' && cadena[y] != '\r'){
-        apilar(Stack, cadena[y]);
+         while((letra=getchar()) != '\n'){
+        apilar(Stack, letra);
+        cadena[y] = letra;
         y++;
       }
+      cadena[y] = '\0';
+      /*scanf("%[^\n]", cadena);*/
+      printf("\tDe la cadena %s ", cadena);
+      /* while(cadena[y] != '\0' && cadena[y] != '\r'){
+        apilar(Stack, cadena[y]);
+        y++;
+      } */
       /* while((letra=getchar()) != '\n'){
         apilar(Stack, letra);
       } */
