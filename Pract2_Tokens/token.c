@@ -1,23 +1,37 @@
+/* Forma de correr el programa
+  gcc mainPilas.c token.c -o eje.exe
+  ./eje.exe 5 
+ */
+/* Librerías a utilizar */
 #include "pilas.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
+/* Declaración de la estructura para guardar los tokens */
 typedef struct Token{
   char id[20]; /* OP, NUM, ID, ID_NOVALIDO, SIM_NOVALIDO */
   char *valor; /* +, 12993, ab, ABC, * */
 } Token;
 
+/* Prototipos de funciones */
 void manejaError(int);
 void introducirToken(char *, char *, Token *, int *);
 
-void main(){
+void main(int argc, char *argv[]){
   //Creamos variables inciales con espacio de 1 para la cadena
   char *input, cadenaTmp[100];
-  int longitud, numTokens, i, noPruebas = 2;
+  int longitud, numTokens, i, noPruebas = 0;
   char caracter;
   PILA Stack1, Stack2;
   Token *listTokens = NULL;
+
+  if(argc != 2){
+    printf("Ejecucion incorrecta. Debe de proporcionar el numero de cadenas a probar.\n");
+    exit(0);
+  }
+
+  noPruebas = atoi(argv[1]);
 
   while(noPruebas--){
     longitud = 1, numTokens = 0;
@@ -36,7 +50,7 @@ void main(){
 
     //Restamos uno a la longitud ya que al final no se agrega uno en la longitud
     longitud--;
-    printf("De la formula: '%s' sus tokens son:\n", input);
+    printf("\nDe la formula: '%s' sus tokens son:\n\n", input);
     Stack1 = crearPila();
     Stack2 = crearPila();
     //Apilamos en forma inversa
@@ -105,10 +119,10 @@ void main(){
 
     //Impresion de tokens
     for (i = 0; i < numTokens; i++){
-      printf("< %s, %s >\n", listTokens[i].id, listTokens[i].valor);
+      printf("\t< %s, %s >\n", listTokens[i].id, listTokens[i].valor);
     }
-    
 
+    printf("\n\n");
   }
   //Liberamos memoria
   free(Stack1);
