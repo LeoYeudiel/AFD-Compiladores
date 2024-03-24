@@ -9,6 +9,7 @@ typedef struct Token{
 } Token;
 
 void manejaError(int);
+void introducirToken(char *, char *, Token *, int *);
 
 void main(){
   //Creamos variables inciales con espacio de 1 para la cadena
@@ -69,15 +70,9 @@ void main(){
       }
       cadenaTmp[i] = '\0';
       if(strlen(cadenaTmp) > 2){
-        strcpy(listTokens[numTokens].id, "ID_NO_VALIDO");
-        listTokens[numTokens].valor = malloc(strlen(cadenaTmp) * sizeof(char));
-        strcpy(listTokens[numTokens].valor, cadenaTmp);
-        numTokens++;
+        introducirToken("ID_NO_VALIDO", cadenaTmp, listTokens, &numTokens);
       }else{
-        strcpy(listTokens[numTokens].id, "ID");
-        listTokens[numTokens].valor = malloc(strlen(cadenaTmp) * sizeof(char));
-        strcpy(listTokens[numTokens].valor, cadenaTmp);
-        numTokens++;
+        introducirToken("ID", cadenaTmp, listTokens, &numTokens);
       }
     //Detectar si es un número
     }else if(caracter >= 48  && caracter <= 57){
@@ -91,27 +86,18 @@ void main(){
         }
       }
       cadenaTmp[i] = '\0';
-      strcpy(listTokens[numTokens].id, "NUMERO");
-      listTokens[numTokens].valor = malloc(strlen(cadenaTmp) * sizeof(char));
-      strcpy(listTokens[numTokens].valor, cadenaTmp);
-      numTokens++;
+      introducirToken("NUMERO", cadenaTmp, listTokens, &numTokens);
       // Detectar si es una operación
     }else if(caracter == '+' || caracter == '-'){
       cadenaTmp[i++] = caracter;
       cadenaTmp[i] = '\0';
-      strcpy(listTokens[numTokens].id, "OPERADOR");
-      listTokens[numTokens].valor = malloc(strlen(cadenaTmp) * sizeof(char));
-      strcpy(listTokens[numTokens].valor, cadenaTmp);
-      numTokens++;
+      introducirToken("OPERADOR", cadenaTmp, listTokens, &numTokens);
       // Detecta un espacio, lo ignora
     }else if(caracter == 32){
     }else{
       cadenaTmp[i++] = caracter;
       cadenaTmp[i] = '\0';
-      strcpy(listTokens[numTokens].id, "SIM_NO_VALIDO");
-      listTokens[numTokens].valor = malloc(strlen(cadenaTmp) * sizeof(char));
-      strcpy(listTokens[numTokens].valor, cadenaTmp);
-      numTokens++;
+      introducirToken("SIM_NO_VALIDO", cadenaTmp, listTokens, &numTokens);
     }
   }
 
@@ -125,6 +111,13 @@ void main(){
   free(Stack1);
   free(Stack2);
   free(input);
+}
+
+void introducirToken(char *tipoToken, char *cadenaTmp, Token *listTokens, int *numTokens){
+  strcpy(listTokens[(*numTokens)].id, tipoToken);
+  listTokens[(*numTokens)].valor = malloc(strlen(cadenaTmp) * sizeof(char));
+  strcpy(listTokens[(*numTokens)].valor, cadenaTmp);
+  (*numTokens)++;
 }
 
 void manejaError(int opcion){
