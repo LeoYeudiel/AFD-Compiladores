@@ -59,10 +59,10 @@ void main(int argc, char *argv[]){
     //printf("\nDe la formula: '%s' sus tokens son:\n\n", input);
     
     //Analizamos todo, para ello creamos el arreglo de tokens que se piensa tener uno por cada caracter en el peores de los casos
-    listTokens = (Token*)malloc(longitud * sizeof(Token));
+    //listTokens = (Token*)malloc(longitud * sizeof(Token));
     while (!es_vaciaPila(Stack2)){
       i = 0;
-      cadenaTmp[i] = '\0';
+      //cadenaTmp[i] = '\0';
       caracter = desapilar(Stack2);
       //printf("%c %d: ", caracter, caracter);
       //listTokens = (Token*)malloc((numTokens+1) * sizeof(Token));
@@ -81,8 +81,10 @@ void main(int argc, char *argv[]){
         }
         cadenaTmp[i] = '\0';
         if(strlen(cadenaTmp) > 2){
+          numTokens++;
           introducirToken("ID_NO_VALIDO", cadenaTmp, listTokens, &numTokens);
         }else{
+          numTokens++;
           introducirToken("ID", cadenaTmp, listTokens, &numTokens);
         }
 
@@ -130,6 +132,7 @@ void main(int argc, char *argv[]){
 }
 
 void introducirToken(char *tipoToken, char *cadenaTmp, Token *listTokens, int *numTokens){
+  listTokens=aumenntartamanioLista(listTokens, numTokens);
   strcpy(listTokens[(*numTokens)].id, tipoToken);
   listTokens[(*numTokens)].valor = (char*)malloc(strlen(cadenaTmp) * sizeof(char));
   strcpy(listTokens[(*numTokens)].valor, cadenaTmp);
@@ -140,7 +143,6 @@ void manejaError(int opcion){
 	char *mensaje[] = {"No hay memoria disponible", "Pila vacia", "Liberando memoria", "Saliendo del programa", "Estacionamiento lleno"};
 	printf("\n%s\n", mensaje[opcion]);
 }
-
 //Inserta cierta fila de un archivo de texto en una pila y devuelve la cantidad
 //de elementos que encontró separados por una coma. Se lee hasta el salto de línea de la fila
 void insertarFilaEnPila(FILE *archivo, Pila *Stack){
@@ -167,4 +169,11 @@ void IntercambiarPilas(Pila *Stack1, Pila *Stack2){
 		codigo=letra;
 		apilar(Stack2, letra);
 	}
+}
+//Aumenta en uno el tamaño de la lista de tokens para poder introducior posteriormente uno
+Token *aumenntartamanioLista(Token *listTokens, int *numTokens){
+  int *nwPtr;
+  int *newPtr = (int *)realloc(listTokens, (*(numTokens)+1) * sizeof(int));
+  return newPtr;
+
 }
