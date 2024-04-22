@@ -59,7 +59,7 @@ void main(int argc, char *argv[]){
     //printf("\nDe la formula: '%s' sus tokens son:\n\n", input);
     
     //Analizamos todo, para ello creamos el arreglo de tokens que se piensa tener uno por cada caracter en el peores de los casos
-    //listTokens = (Token*)malloc(longitud * sizeof(Token));
+    listTokens = (Token*)malloc(longitud * sizeof(Token));
     while (!es_vaciaPila(Stack2)){
       i = 0;
       //cadenaTmp[i] = '\0';
