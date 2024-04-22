@@ -71,7 +71,7 @@ void main(int argc, char *argv[]){
     } 
     
     //Analizamos todo, para ello creamos el arreglo de tokens que se piensa tener uno por cada caracter en el peores de los casos
-    listTokens = malloc(longitud * sizeof(Token));
+    listTokens = (Token*)malloc(longitud * sizeof(Token));
     while (!es_vaciaPila(Stack2)){
       i = 0;
       cadenaTmp[i] = '\0';
@@ -143,7 +143,7 @@ void main(int argc, char *argv[]){
 
 void introducirToken(char *tipoToken, char *cadenaTmp, Token *listTokens, int *numTokens){
   strcpy(listTokens[(*numTokens)].id, tipoToken);
-  listTokens[(*numTokens)].valor = malloc(strlen(cadenaTmp) * sizeof(char));
+  listTokens[(*numTokens)].valor = (char*)malloc(strlen(cadenaTmp) * sizeof(char));
   strcpy(listTokens[(*numTokens)].valor, cadenaTmp);
   (*numTokens)++;
 }
