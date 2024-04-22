@@ -44,9 +44,9 @@ void main(int argc, char *argv[]){
       fclose(archivo);
       exit(0);
   }
-
+  numTokens = 0;
   while(feof(archivo)==0){
-    longitud = 1, numTokens = 0;
+    //longitud = 1; 
     Stack1 = crearPila();
     Stack2 = crearPila();
     //Apilamos, pero el TAD Pila es LIFO (se almacenará al revés)
@@ -59,7 +59,7 @@ void main(int argc, char *argv[]){
     //printf("\nDe la formula: '%s' sus tokens son:\n\n", input);
     
     //Analizamos todo, para ello creamos el arreglo de tokens que se piensa tener uno por cada caracter en el peores de los casos
-    listTokens = (Token*)malloc(longitud * sizeof(Token));
+    //listTokens = (Token*)malloc(longitud * sizeof(Token));
     while (!es_vaciaPila(Stack2)){
       i = 0;
       //cadenaTmp[i] = '\0';
@@ -117,16 +117,14 @@ void main(int argc, char *argv[]){
         introducirToken("SIM_NO_VALIDO", cadenaTmp, listTokens, &numTokens);
       }
     }
-
-    //Impresión de los tokens
-    for (i = 0; i < numTokens; i++){
-      printf("\t< %s, %s >\n", listTokens[i].id, listTokens[i].valor);
-    }
-
-    printf("\n\n");
     //Liberamos memoria
     free(Stack1);
     free(Stack2);
+  }
+  printf("\n\n");
+  //Impresión de los tokens
+  for (i = 0; i < numTokens; i++){
+    printf("\t< %s, %s >\n", listTokens[i].id, listTokens[i].valor);
   }
 }
 
@@ -171,6 +169,6 @@ void IntercambiarPilas(Pila *Stack1, Pila *Stack2){
 }
 //Aumenta en uno el tamaño de la lista de tokens para poder introducir posteriormente uno
 Token *aumenntartamanioLista(Token *listTokens, int *numTokens){
-  Token *tokenAux = (Token*)realloc(listTokens, (*(numTokens)+1) * sizeof(int));
-  return tokenAux;
+  listTokens = (Token*)realloc(listTokens, (*(numTokens)) * sizeof(Token));
+  return listTokens;
 }
