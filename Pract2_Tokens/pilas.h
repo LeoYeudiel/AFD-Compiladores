@@ -10,6 +10,7 @@ typedef struct Nodo_Pila{
 
 typedef struct{
 	Nodo_Pila *tope;
+	int numElem;
 }Pila;
 
 typedef Pila *PILA;

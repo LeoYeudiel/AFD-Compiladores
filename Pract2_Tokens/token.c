@@ -24,12 +24,13 @@ void IntercambiarPilas(Pila *, Pila *);
 void manejaError(int);
 void introducirToken(char *, char *, Token *, int *);
 Token *aumenntartamanioLista(Token *, int *);
+char *vaciarPilaEnCadena(Pila *);
 void main(int argc, char *argv[]){
   //Creamos variables inciales con espacio de 1 para la cadena
-  char *input = NULL, cadenaTmp[100];
+  char *input = NULL, *cadenaTmp;
   int longitud, numTokens, i;
   char caracter;
-  PILA Stack1, Stack2;
+  PILA Stack1, Stack2, StackAux;
   Token *listTokens = NULL;
   FILE *archivo;
   //Verificamos que haya introducido el numero de cadenas a evaluar
@@ -49,6 +50,7 @@ void main(int argc, char *argv[]){
     //longitud = 1; 
     Stack1 = crearPila();
     Stack2 = crearPila();
+    StackAux = crearPila();
     //Apilamos, pero el TAD Pila es LIFO (se almacenará al revés)
     insertarFilaEnPila(archivo, Stack1);
     //Usamos Stack2 para reordenar
@@ -69,19 +71,20 @@ void main(int argc, char *argv[]){
       
       //Primer caso: si es una letra mayúscula y/o minúscula
       if((caracter >= 65  && caracter <= 90) || (caracter >= 97 && caracter <= 122)){
-        cadenaTmp[i++] = caracter;
+        apilar(StackAux, caracter);
         while(!es_vaciaPila(Stack2)){
           //Ya que se detectó una letra, debemos analizar si cuenta con otra. Si tiene más de dos será un ID_NO_VALIDO
           if((elemTope(Stack2) >= 65  && elemTope(Stack2) <= 90) || (elemTope(Stack2) >= 97 && elemTope(Stack2) <= 122)){
             caracter = desapilar(Stack2);
-            cadenaTmp[i++] = caracter;
+            apilar(StackAux, caracter);
           }else{
             break;
           }
         }
-        cadenaTmp[i] = '\0';
-        if(strlen(cadenaTmp) > 2){
+        apilar(StackAux, '\0');
+        if(StackAux->numElem > 3){
           numTokens++;
+          cadenaTmp=vaciarPilaEnCadena(StackAux);
           introducirToken("ID_NO_VALIDO", cadenaTmp, listTokens, &numTokens);
         }else{
           numTokens++;
@@ -90,30 +93,33 @@ void main(int argc, char *argv[]){
 
       //Segundo caso: Detectar si es un número
       }else if(caracter >= 48  && caracter <= 57){
-        cadenaTmp[i++] = caracter;
+        apilar(StackAux, caracter);
         while(!es_vaciaPila(Stack2)){
           //Aquí no importa la longitud del número, cuando deje de detectar numeros, se verificara si se trata de otro símbolo
           if(elemTope(Stack2) >= 48  && elemTope(Stack2) <= 57){
             caracter = desapilar(Stack2);
-            cadenaTmp[i++] = caracter;
+            apilar(StackAux, caracter);
           }else{
             break;
           }
         }
-        cadenaTmp[i] = '\0';
+        apilar(StackAux, '\0');
+        cadenaTmp=vaciarPilaEnCadena(StackAux);
         introducirToken("NUMERO", cadenaTmp, listTokens, &numTokens);
         //Tercer caso: Detectar si es un símbolo de operación + o -
       }else if(caracter == '+' || caracter == '-'){
-        cadenaTmp[i++] = caracter;
-        cadenaTmp[i] = '\0';
+        apilar(StackAux, caracter);
+        apilar(StackAux, '\0');
+        cadenaTmp=vaciarPilaEnCadena(StackAux);
         introducirToken("OPERADOR", cadenaTmp, listTokens, &numTokens);
         //Cuarto caso: Detecta un espacio, lo ignora
       }else if(caracter == 32){
       }
         //Quinto caso: Cualquier otro caracter que no pertenezca a los casos anteriores, es INVÁLIDO
       else{
-        cadenaTmp[i++] = caracter;
-        cadenaTmp[i] = '\0';
+        apilar(StackAux, caracter);
+        apilar(StackAux, '\0');
+        cadenaTmp=vaciarPilaEnCadena(StackAux);
         introducirToken("SIM_NO_VALIDO", cadenaTmp, listTokens, &numTokens);
       }
     }
@@ -171,4 +177,19 @@ void IntercambiarPilas(Pila *Stack1, Pila *Stack2){
 Token *aumenntartamanioLista(Token *listTokens, int *numTokens){
   listTokens = (Token*)realloc(listTokens, (*(numTokens)) * sizeof(Token));
   return listTokens;
+}
+char *vaciarPilaEnCadena(Pila *StackAux){
+  int j=0;
+  char *cadenatmp;
+  PILA S1=crearPila();
+  //ponemos en orden los elementos de la pila  StackAux
+  IntercambiarPilas(StackAux, S1);
+  //abrimos espacio en memoria para almacenar la cadena correspondiente que tenga S1 
+  cadenatmp=(char*)malloc((S1->numElem)*sizeof(char));
+  //vaciamos S1 en cadenatmp 
+  while(!es_vaciaPila(S1)){
+    cadenatmp[j++]=desapilar(S1);
+  }
+  free(S1);
+  return cadenatmp;
 }

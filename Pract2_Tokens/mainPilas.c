@@ -11,6 +11,7 @@ PILA crearPila(){
 		exit(0);
 	}
 	S->tope=NULL;
+	S->numElem=0;
 }
 
 int es_vaciaPila(PILA S){
@@ -48,6 +49,7 @@ char desapilar(PILA S){
 	aux= S->tope;
 	v = aux->dato;
 	S->tope = aux->anterior;
+	S->numElem--;
 	free(aux);
 	return v;
 }
@@ -57,6 +59,8 @@ void apilar(PILA S, char elem){
 	nvo = crearNodoPila();
 	nvo->dato = elem;
 	nvo->anterior = S->tope;
+	S->numElem++;
 	S->tope = nvo;
+
 }
 
