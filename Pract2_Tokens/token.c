@@ -23,7 +23,7 @@ void insertarFilaEnPila(FILE *, Pila *);
 void IntercambiarPilas(Pila *, Pila *);
 void manejaError(int);
 void introducirToken(char *, char *, Token *, int *);
-
+Token *aumenntartamanioLista(Token *, int *);
 void main(int argc, char *argv[]){
   //Creamos variables inciales con espacio de 1 para la cadena
   char *input = NULL, cadenaTmp[100];
@@ -42,7 +42,7 @@ void main(int argc, char *argv[]){
   if(archivo==NULL){
       printf("\n El archivo no se pudo abrir");
       fclose(archivo);
-      return 1;
+      exit(0);
   }
 
   while(feof(archivo)==0){
@@ -53,7 +53,7 @@ void main(int argc, char *argv[]){
     insertarFilaEnPila(archivo, Stack1);
     //Usamos Stack2 para reordenar
     IntercambiarPilas(Stack1, Stack2);
-    input[longitud] = '\0';
+    //input[longitud] = '\0';
     //Restamos uno a la longitud ya que al final se tiene el caracter nulo
     //longitud--;
     //printf("\nDe la formula: '%s' sus tokens son:\n\n", input);
@@ -124,11 +124,10 @@ void main(int argc, char *argv[]){
     }
 
     printf("\n\n");
+    //Liberamos memoria
+    free(Stack1);
+    free(Stack2);
   }
-  //Liberamos memoria
-  free(Stack1);
-  free(Stack2);
-  free(input);
 }
 
 void introducirToken(char *tipoToken, char *cadenaTmp, Token *listTokens, int *numTokens){
@@ -170,10 +169,8 @@ void IntercambiarPilas(Pila *Stack1, Pila *Stack2){
 		apilar(Stack2, letra);
 	}
 }
-//Aumenta en uno el tamaño de la lista de tokens para poder introducior posteriormente uno
+//Aumenta en uno el tamaño de la lista de tokens para poder introducir posteriormente uno
 Token *aumenntartamanioLista(Token *listTokens, int *numTokens){
-  int *nwPtr;
-  int *newPtr = (int *)realloc(listTokens, (*(numTokens)+1) * sizeof(int));
-  return newPtr;
-
+  Token *tokenAux = (Token*)realloc(listTokens, (*(numTokens)+1) * sizeof(int));
+  return tokenAux;
 }
