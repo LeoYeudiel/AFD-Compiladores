@@ -59,3 +59,4 @@ void apilar(PILA S, char elem){
 	nvo->anterior = S->tope;
 	S->tope = nvo;
 }
+
