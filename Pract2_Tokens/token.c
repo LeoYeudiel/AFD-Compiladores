@@ -51,10 +51,15 @@ void main(int argc, char *argv[]){
     Stack1 = crearPila();
     Stack2 = crearPila();
     StackAux = crearPila();
+    //listTokens = NULL;
     //Apilamos, pero el TAD Pila es LIFO (se almacenará al revés)
     insertarFilaEnPila(archivo, Stack1);
     //Usamos Stack2 para reordenar
     IntercambiarPilas(Stack1, Stack2);
+    apilar(Stack2, '\0');
+    int tamCaracteres=Stack2->numElem;
+    cadenaTmp=vaciarPilaEnCadena(Stack2);
+    printf("\n %s", cadenaTmp);
     //input[longitud] = '\0';
     //Restamos uno a la longitud ya que al final se tiene el caracter nulo
     //longitud--;
@@ -85,9 +90,11 @@ void main(int argc, char *argv[]){
         if(StackAux->numElem > 3){
           numTokens++;
           cadenaTmp=vaciarPilaEnCadena(StackAux);
+          printf("\n TOKEN ID NO VALIDO\n");
           introducirToken("ID_NO_VALIDO", cadenaTmp, listTokens, &numTokens);
         }else{
           numTokens++;
+          printf("\n OKEN ID VALIDO\n");
           introducirToken("ID", cadenaTmp, listTokens, &numTokens);
         }
 
@@ -105,13 +112,18 @@ void main(int argc, char *argv[]){
         }
         apilar(StackAux, '\0');
         cadenaTmp=vaciarPilaEnCadena(StackAux);
+        printf("\n TOKEN NUMERO VALIDO\n");
+        numTokens++;
         introducirToken("NUMERO", cadenaTmp, listTokens, &numTokens);
         //Tercer caso: Detectar si es un símbolo de operación + o -
       }else if(caracter == '+' || caracter == '-'){
         apilar(StackAux, caracter);
         apilar(StackAux, '\0');
         cadenaTmp=vaciarPilaEnCadena(StackAux);
-        introducirToken("OPERADOR", cadenaTmp, listTokens, &numTokens);
+        printf("\n TOKEN OPERADDOR VALIDO\n");
+        numTokens++;
+        introducirToken("OPERADOR", cadenaTmp, listTokens, &numTokens);//EL PROBLEMA ESTA CUANDO SE INTRODUCE UN SIMBOLO
+        
         //Cuarto caso: Detecta un espacio, lo ignora
       }else if(caracter == 32){
       }
@@ -120,13 +132,17 @@ void main(int argc, char *argv[]){
         apilar(StackAux, caracter);
         apilar(StackAux, '\0');
         cadenaTmp=vaciarPilaEnCadena(StackAux);
+        printf("\n TOKEN SIM NO VALIDO\n");
+        numTokens++;
         introducirToken("SIM_NO_VALIDO", cadenaTmp, listTokens, &numTokens);
       }
     }
     //Liberamos memoria
     free(Stack1);
     free(Stack2);
+    
   }
+  free(listTokens);
   printf("\n\n");
   //Impresión de los tokens
   for (i = 0; i < numTokens; i++){
@@ -135,11 +151,13 @@ void main(int argc, char *argv[]){
 }
 
 void introducirToken(char *tipoToken, char *cadenaTmp, Token *listTokens, int *numTokens){
+  printf("\n antes de aumentra tamaño de lista de tokens\n");
   listTokens=aumenntartamanioLista(listTokens, numTokens);
+  printf("\n DESPUES de aumentra tamaño de lista de tokens\n");
   strcpy(listTokens[(*numTokens)].id, tipoToken);
-  listTokens[(*numTokens)].valor = (char*)malloc(strlen(cadenaTmp) * sizeof(char));
+  listTokens[(*numTokens)].valor = (char*)malloc((strlen(cadenaTmp)) * sizeof(char));
   strcpy(listTokens[(*numTokens)].valor, cadenaTmp);
-  (*numTokens)++;
+  printf("\n TOKEN LLENO\n");
 }
 
 void manejaError(int opcion){
@@ -175,7 +193,7 @@ void IntercambiarPilas(Pila *Stack1, Pila *Stack2){
 }
 //Aumenta en uno el tamaño de la lista de tokens para poder introducir posteriormente uno
 Token *aumenntartamanioLista(Token *listTokens, int *numTokens){
-  listTokens = (Token*)realloc(listTokens, (*(numTokens)) * sizeof(Token));
+  listTokens = (Token*)realloc(listTokens, (*(numTokens+1)) * sizeof(Token));
   return listTokens;
 }
 char *vaciarPilaEnCadena(Pila *StackAux){
