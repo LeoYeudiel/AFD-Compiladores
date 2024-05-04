@@ -46,20 +46,27 @@ void main(int argc, char *argv[]){
       exit(0);
   }
   numTokens = 0;
+  int l=0;
+  Stack1 = crearPila();
+  Stack2 = crearPila();
+  StackAux = crearPila();
   while(feof(archivo)==0){
+    cadenaTmp=NULL;
     //longitud = 1; 
-    Stack1 = crearPila();
-    Stack2 = crearPila();
-    StackAux = crearPila();
     //listTokens = NULL;
     //Apilamos, pero el TAD Pila es LIFO (se almacenará al revés)
     insertarFilaEnPila(archivo, Stack1);
     //Usamos Stack2 para reordenar
     IntercambiarPilas(Stack1, Stack2);
     apilar(Stack2, '\0');
+    printf("\n %d", Stack2->numElem);
     int tamCaracteres=Stack2->numElem;
+    printf("\n ANTES DE VACIAR LA PILA EN CADENA");
     cadenaTmp=vaciarPilaEnCadena(Stack2);
+    printf("\n DESPUES DE VACIAR LA PILA EN CADENA");
     printf("\n %s", cadenaTmp);
+    if(es_vaciaPila(Stack2)==1) printf("\n VACIA");
+    if(es_vaciaPila(Stack2)==0) printf("\n NO VACIA");
     //input[longitud] = '\0';
     //Restamos uno a la longitud ya que al final se tiene el caracter nulo
     //longitud--;
@@ -138,16 +145,17 @@ void main(int argc, char *argv[]){
       }
     }
     //Liberamos memoria
-    free(Stack1);
-    free(Stack2);
-    
+    free(cadenaTmp);
+    //l++;
   }
-  free(listTokens);
-  printf("\n\n");
+  free(Stack1);
+  free(Stack2);
+  //free(listTokens);
+  //printf("\n\n");
   //Impresión de los tokens
-  for (i = 0; i < numTokens; i++){
+  /*for (i = 0; i < numTokens; i++){
     printf("\t< %s, %s >\n", listTokens[i].id, listTokens[i].valor);
-  }
+  }*/
 }
 
 void introducirToken(char *tipoToken, char *cadenaTmp, Token *listTokens, int *numTokens){
@@ -199,15 +207,16 @@ Token *aumenntartamanioLista(Token *listTokens, int *numTokens){
 char *vaciarPilaEnCadena(Pila *StackAux){
   int j=0;
   char *cadenatmp;
-  PILA S1=crearPila();
-  //ponemos en orden los elementos de la pila  StackAux
-  IntercambiarPilas(StackAux, S1);
+  //Los elementos en la pila StackAux ya vienen ordenados
   //abrimos espacio en memoria para almacenar la cadena correspondiente que tenga S1 
-  cadenatmp=(char*)malloc((S1->numElem)*sizeof(char));
-  //vaciamos S1 en cadenatmp 
-  while(!es_vaciaPila(S1)){
-    cadenatmp[j++]=desapilar(S1);
+  cadenatmp=(char*)malloc((StackAux->numElem)*sizeof(char));
+  if (cadenatmp == NULL) {
+    printf("Error: No se pudo asignar memoria\n");
+    return NULL;
   }
-  free(S1);
+  //vaciamos StackAux en cadenatmp 
+  while(!es_vaciaPila(StackAux)){
+    cadenatmp[j++]=desapilar(StackAux);
+  }
   return cadenatmp;
 }
