@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
     int numTokens = 0, i;
     PILA Stack1, Stack2, StackAux;
     Token *listTokens = NULL;
-    FILE *archivo;
+    FILE *archivo, *archivoSalida;
 
     if (argc != 2) {
         printf("Ejecucion incorrecta. Debe de proporcionar el nombre del archivo.\n");
@@ -93,13 +93,19 @@ int main(int argc, char *argv[]) {
     free(Stack1);
     free(Stack2);
     free(StackAux);
+    archivoSalida=fopen("salidaLexico.txt", "w");
+    if(archivoSalida==NULL){
+      printf("Error al abrir el archivo  \n");
+      return 1;
+    }
   printf("\n %d", numTokens);
     // Impresión de los tokens
     for (i = 0; i < numTokens; i++) {
-        printf("\t< %s, %s >\n", listTokens[i].id, listTokens[i].valor);
+        fprintf(archivoSalida, "< %s, %s >\n", listTokens[i].id, listTokens[i].valor);
         free(listTokens[i].valor);
     }
     free(listTokens);
+    fclose(archivoSalida);
 }
 
 void introducirToken(char *tipoToken, char *cadenaTmp, Token **listTokens, int *numTokens) {
