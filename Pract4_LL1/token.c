@@ -195,7 +195,7 @@ int main(int argc, char *argv[]) {
     //E, E', T, T', F 
     char **primero;
     primero=(char**)malloc(5*sizeof(char*));
-    if(primero=NULL){
+    if(primero==NULL){
       printf("Error al asignar memoria\n");
       exit(0);
     }
@@ -212,10 +212,29 @@ int main(int argc, char *argv[]) {
     strcpy(*(primero+3), "*/<");
     strcpy(*(primero+4), "I(");
 
-    for(int i=0;i<5;i++){
-      printf("%s\n", *(primero+i));
+    //matriz de funcion SIGUIENTE, las filas represntan a las reglas de produccion
+    //E, E', T, T', F 
+    char **siguiente;
+    siguiente=(char**)malloc(5*sizeof(char*));
+    if(siguiente==NULL){
+      printf("Error al asignar memoria\n");
+      exit(0);
     }
+    *(siguiente)=(char*)malloc(3*sizeof(char)); //E
+    *(siguiente+1)=(char*)malloc(3*sizeof(char)); //E'
+    *(siguiente+2)=(char*)malloc(5*sizeof(char));//T
+    *(siguiente+3)=(char*)malloc(5*sizeof(char));//T'
+    *(siguiente+4)=(char*)malloc(7*sizeof(char));//F
+    //llenado de la función siguiente
+    strcpy(*(siguiente), "$)");
+    strcpy(*(siguiente+1), "$)");
+    strcpy(*(siguiente+2), "$+-)");
+    strcpy(*(siguiente+3), "$+-)");
+    strcpy(*(siguiente+4), "$+-*/)");
 
+    for(int i=0;i<5;i++){
+      printf("%s\n", *(siguiente+i));
+    }
 }
 
 
