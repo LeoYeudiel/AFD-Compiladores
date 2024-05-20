@@ -293,6 +293,8 @@ int main(int argc, char *argv[]) {
     //Se valida que la cadena sea aceptada por el analizador sintactico LL1
     PILA validacion;
     validacion=crearPila();
+    //se añade el simbolo de fin de pila
+    //apilar(validacion, '$');
     //se añade la regla de produccion inicial E
     apilar(validacion, 'E');
     posCadena=validarCadena(cadenaAnalisis, ReglasProd, matrizBusqueda, gramatica, validacion, simsTerminales);
@@ -309,7 +311,9 @@ int main(int argc, char *argv[]) {
 }
 
 int validarCadena(char *cadenaAnalisis, LISTA*ReglasProd, int **matrizBusqueda, char*gramatica, PILA validacion, columnasTabla *simsTerminales){
-  char coincidencia;
+  PILA aux;
+  aux=crearPila();
+  char coincidencia, car;
   int posCadena=0;
   int posFila, posColumna;
   while(es_vaciaPila(validacion)!=1 && posCadena<=strlen(cadenaAnalisis)){
@@ -319,8 +323,19 @@ int validarCadena(char *cadenaAnalisis, LISTA*ReglasProd, int **matrizBusqueda, 
       posFila=BuscarIndiceenGramatica(coincidencia, gramatica);
       posColumna=BuscarColumna(simsTerminales, cadenaAnalisis[posCadena]);
       printf("\n %d %d\n", posFila, posColumna);
+      //validamos que exista una regla d eproduccion en la celda de la matriz
       if(matrizBusqueda[posFila][posColumna]!=-1){
         insertarProduccionEnFila(validacion, ReglasProd, posFila, matrizBusqueda[posFila][posColumna]);
+        /*IntercambiarPilas(validacion, aux);
+        while(es_vaciaPila(aux)!=1){
+          car=desapilar(aux);
+          printf("%c", car);
+          apilar(validacion, car);
+        }
+        printf("\n");*/
+
+      }else{
+        return posCadena;
       }
       //si es epsilon no hacer nada, solo desapilar
       if(elemTope(validacion)=='<')
@@ -330,13 +345,14 @@ int validarCadena(char *cadenaAnalisis, LISTA*ReglasProd, int **matrizBusqueda, 
       printf("%c", cadenaAnalisis[posCadena]);
       posCadena++;
     }
-    printf("\nHola");
   }
   return posCadena;
 }
 
 
 void insertarProduccionEnFila(PILA validacion, LISTA *ReglasProd, int fila, int columna){
+  PILA aux;
+  aux=crearPila();
   Nodo_Lista *actual;
   int col=1, contCadena=0;
   //nos posicionamos en la fila que contiene la regla de produccion de interes
@@ -347,9 +363,11 @@ void insertarProduccionEnFila(PILA validacion, LISTA *ReglasProd, int fila, int 
   }
   //apilamos esa produccion en nuestra pila de validacion
   while(contCadena<strlen(actual->regla)){
-    apilar(validacion, (actual->regla)[contCadena]);
+    apilar(aux, (actual->regla)[contCadena]);
     contCadena++;
   }
+  //insertamos los datos en la pila original de validacion de forma invertida
+  IntercambiarPilas(aux, validacion);
 }
 
 
