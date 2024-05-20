@@ -30,6 +30,15 @@ void llenarMatrizBusqueda(LISTA *, char **, char **, columnasTabla *, int **, ch
 int BuscarIndiceenGramatica(char, char*);
 int BuscarColumna(columnasTabla *, char);
 void llenarMatrizValPredetrminado(int **, int, int);
+//Verifica que la cadena sea acceptada por el analizador LL1
+/*paremetros:
+la cadena tokenizada a analizar, las reglas de producciones, 
+la matriz en donde se buscan las reglas de produccion y la cadena que
+contiene las reglas de produccion E..F
+*/
+int validarCadena(char *, LISTA*, int **, char*, PILA, columnasTabla *);
+//Inserta la correpondiente regla de produccion en la pila
+void insertarProduccionEnFila(PILA, LISTA*, int, int);
 int main(int argc, char *argv[]) {
     char *cadenaTmp = NULL;
     int numTokens = 0, i, es_numero = 0, no_valida = 0;
@@ -181,6 +190,7 @@ int main(int argc, char *argv[]) {
         }
     }
     cadenaAnalisis = vaciarPilaEnCadena(pila2);
+    printf("\n Cadena tokenizada: %s\n", cadenaAnalisis);
     fclose(archivo2);
     //Gramatica
     char *gramatica="EeTtF"; //E, E', T, T', F
@@ -278,7 +288,71 @@ int main(int argc, char *argv[]) {
       }
       printf("\n");
     }
+
+    int posCadena;
+    //Se valida que la cadena sea aceptada por el analizador sintactico LL1
+    PILA validacion;
+    validacion=crearPila();
+    //se añade la regla de produccion inicial E
+    apilar(validacion, 'E');
+    posCadena=validarCadena(cadenaAnalisis, ReglasProd, matrizBusqueda, gramatica, validacion, simsTerminales);
+    if(posCadena==strlen(cadenaAnalisis) && es_vaciaPila(validacion)==1){
+      printf("=====================\n");
+      printf("Cadena aceptada por el analizador sintactico LL1");
+      printf("=====================\n");
+    }else{
+      printf("=====================\n");
+      printf("Cadena NO aceptada por el analizador sintactico LL1");
+      printf("Error en la posicion de la cadena %d", posCadena);
+      printf("=====================\n");
+    }
 }
+
+int validarCadena(char *cadenaAnalisis, LISTA*ReglasProd, int **matrizBusqueda, char*gramatica, PILA validacion, columnasTabla *simsTerminales){
+  char coincidencia;
+  int posCadena=0;
+  int posFila, posColumna;
+  while(es_vaciaPila(validacion)!=1 && posCadena<=strlen(cadenaAnalisis)){
+    coincidencia=desapilar(validacion);
+    //si se trata de un sim no terminal
+    if(coincidencia!=cadenaAnalisis[posCadena]){
+      posFila=BuscarIndiceenGramatica(coincidencia, gramatica);
+      posColumna=BuscarColumna(simsTerminales, cadenaAnalisis[posCadena]);
+      printf("\n %d %d\n", posFila, posColumna);
+      if(matrizBusqueda[posFila][posColumna]!=-1){
+        insertarProduccionEnFila(validacion, ReglasProd, posFila, matrizBusqueda[posFila][posColumna]);
+      }
+      //si es epsilon no hacer nada, solo desapilar
+      if(elemTope(validacion)=='<')
+        coincidencia=desapilar(validacion);
+    }else{
+      //si se trata de un simbolo terminal avanzar en la cadena 
+      printf("%c", cadenaAnalisis[posCadena]);
+      posCadena++;
+    }
+    printf("\nHola");
+  }
+  return posCadena;
+}
+
+
+void insertarProduccionEnFila(PILA validacion, LISTA *ReglasProd, int fila, int columna){
+  Nodo_Lista *actual;
+  int col=1, contCadena=0;
+  //nos posicionamos en la fila que contiene la regla de produccion de interes
+  actual=ReglasProd[fila];
+  while(col<columna){
+    actual=actual->siguiente;
+    col++;
+  }
+  //apilamos esa produccion en nuestra pila de validacion
+  while(contCadena<strlen(actual->regla)){
+    apilar(validacion, (actual->regla)[contCadena]);
+    contCadena++;
+  }
+}
+
+
 void llenarMatrizValPredetrminado(int **matrizBusqueda, int filas, int columnas){
   int val=-1;
   for(int i=0;i<filas;i++){
