@@ -8,6 +8,11 @@ typedef struct Token {
     char id[20]; /* OP, NUM, ID, ID_NOVALIDO, SIM_NOVALIDO */
     char *valor; /* +, 12993, ab, ABC, * */
 } Token;
+//Estructura para identificar en que columna esta cierto operador
+typedef struct columnasTabla{
+  char simbolo;
+  int columna;
+}columnasTabla;
 
 void insertarFilaEnPila(FILE *, Pila *);
 void IntercambiarPilas(Pila *, Pila *);
@@ -16,6 +21,15 @@ void introducirToken(char *, char *, Token **, int *);
 Token *aumenntartamanioLista(Token **, int *);
 char *vaciarPilaEnCadena(Pila *);
 
+//funcion para llenar la matriz de busqueda recibe los siguientes parámetros
+/*la lista de las reglas de produccion, la matriz que contiene las funciones primero, la matriz
+de las funciones siguiente, la estructura columnasTabla que identifica en que columna estan ciertos simbolos
+la matriz que será llenada y el arreglo de caracteres que contiene a todas las reglas de produccion
+*/
+void llenarMatrizBusqueda(LISTA *, char **, char **, columnasTabla *, int **, char*); 
+int BuscarIndiceenGramatica(char, char*);
+int BuscarColumna(columnasTabla *, char);
+void llenarMatrizValPredetrminado(int **, int, int);
 int main(int argc, char *argv[]) {
     char *cadenaTmp = NULL;
     int numTokens = 0, i, es_numero = 0, no_valida = 0;
@@ -175,22 +189,17 @@ int main(int argc, char *argv[]) {
     for(int i=0;i<5;i++){
       ReglasProd[i]=crearLista();
     }
-    insertar(&ReglasProd[0], "Te");
-    insertar(&ReglasProd[1], "+Te");
-    insertar(&ReglasProd[1], "-Te");
-    insertar(&ReglasProd[1], "<");//epsilon
-    insertar(&ReglasProd[2], "Ft");
-    insertar(&ReglasProd[3], "*Ft");
-    insertar(&ReglasProd[3], "/Ft");
-    insertar(&ReglasProd[3], "<");
-    insertar(&ReglasProd[4], "(E)");
-    insertar(&ReglasProd[4], "I");
-    Nodo_Lista *actual;
-    actual=ReglasProd[3];
-    while(actual!=NULL){
-      printf("%s\n", actual->regla);
-      actual=actual->siguiente;
-    }
+    insertar(&ReglasProd[0], "Te");//E
+    insertar(&ReglasProd[1], "+Te");//E'
+    insertar(&ReglasProd[1], "-Te");//E'
+    insertar(&ReglasProd[1], "<");//E', <=epsilon
+    insertar(&ReglasProd[2], "Ft");//T
+    insertar(&ReglasProd[3], "*Ft");//T'
+    insertar(&ReglasProd[3], "/Ft");//T'
+    insertar(&ReglasProd[3], "<");//T'
+    insertar(&ReglasProd[4], "(E)");//F
+    insertar(&ReglasProd[4], "I");//F
+    
     //matriz de funcion primero, las filas represnetan a las reglas de produccion
     //E, E', T, T', F 
     char **primero;
@@ -232,12 +241,115 @@ int main(int argc, char *argv[]) {
     strcpy(*(siguiente+3), "$+-)");
     strcpy(*(siguiente+4), "$+-*/)");
 
+    //Se identifica a cada simbolo terminal en cierta columna
+    columnasTabla simsTerminales[8];
+    simsTerminales[0].columna=0;
+    simsTerminales[0].simbolo='+';
+    simsTerminales[1].columna=1;
+    simsTerminales[1].simbolo='-';
+    simsTerminales[2].columna=2;
+    simsTerminales[2].simbolo='*';
+    simsTerminales[3].columna=3;
+    simsTerminales[3].simbolo='/';
+    simsTerminales[4].columna=4;
+    simsTerminales[4].simbolo='(';
+    simsTerminales[5].columna=5;
+    simsTerminales[5].simbolo=')';
+    simsTerminales[6].columna=6;
+    simsTerminales[6].simbolo='I';
+    simsTerminales[7].columna=7;
+    simsTerminales[7].simbolo='$';
+    //Se crea la matriz en donde se guardarán las reglas de producción:
+    int **matrizBusqueda;
+    matrizBusqueda=(int**)malloc(5*sizeof(int*));
+    if(matrizBusqueda==NULL)
+      exit(0);
+    //espacio para los simbolos de las columnas
     for(int i=0;i<5;i++){
-      printf("%s\n", *(siguiente+i));
+      *(matrizBusqueda+i)=(int*)malloc(8*sizeof(int));
+    }
+    //cada fila de la matriz representa la lista iésima, por lo cual en cada 
+    //celda de la matriz solo se guardará la columna en la que se encuentra la regla de produccion
+    llenarMatrizValPredetrminado(matrizBusqueda, 5, 8);//Se llena la matriz con un valor prdeterminado
+    llenarMatrizBusqueda(ReglasProd, primero, siguiente, simsTerminales, matrizBusqueda, gramatica);
+    for(int k=0;k<5;k++){
+      for(int l=0;l<8;l++){
+        printf(" %d ", matrizBusqueda[k][l]);
+      }
+      printf("\n");
     }
 }
+void llenarMatrizValPredetrminado(int **matrizBusqueda, int filas, int columnas){
+  int val=-1;
+  for(int i=0;i<filas;i++){
+    for(int j=0;j<columnas;j++){
+      matrizBusqueda[i][j]=val;
+    }
+  }
+}
+void llenarMatrizBusqueda(LISTA *ReglasProd, char **primero, char **siguiente, columnasTabla *simsTerminales, int **matrizBusqueda, char* gramatica){
+  int pos;
+  char *primeroIndividual;
+  int reglaProduccion;
+  for(int i=0;i<5;i++){
+    Nodo_Lista *actual;
+    actual=ReglasProd[i];
+    //avanzar en las reglas de produccion
+    reglaProduccion=0;
+    while(actual!=NULL){
+      if((actual->regla)[0]=='E' || (actual->regla)[0]=='e' || (actual->regla)[0]=='T' || (actual->regla)[0]=='t' || (actual->regla)[0]=='F'){
+        pos=BuscarIndiceenGramatica((actual->regla)[0], gramatica);
+        primeroIndividual=(*(primero+pos));
+        for(int m=0;m<strlen(primeroIndividual);m++){
+          //Buscamos a que columna pertenece cada uno de los simbolos dentro del conjunto primero
+          pos=BuscarColumna(simsTerminales, primeroIndividual[m]);
+          //indica en la fila adecuada que regla de produccion colocar
+          matrizBusqueda[i][pos]=reglaProduccion+1;
+          //printf("\n regla:%d\n", reglaProduccion+1);
+        }
+        
+      }else{
+        //si se trata de una produccion epsilon entonces se colocan
+        //las producciones en siguiente de la produccion
+        if((actual->regla)[0]=='<'){
+          //Se necesita la funcion siguiente de la regla de produccion actual
+          primeroIndividual=(*(siguiente+i));
+          for(int m=0;m<strlen(primeroIndividual);m++){
+            pos=BuscarColumna(simsTerminales, primeroIndividual[m]);
+            //indica en la fila adecuada que regla de produccion colocar
+            matrizBusqueda[i][pos]=reglaProduccion+1;
+            //printf("\n regla:%d\n", reglaProduccion+1);
+          }
+        }else{
+          //Se trata de un simbolo terminal, primero(terminal)= el mismo terminal
+          pos=BuscarColumna(simsTerminales, (actual->regla)[0]);
+          matrizBusqueda[i][pos]=reglaProduccion+1;
+        }
+      }
+      actual=actual->siguiente;
+      reglaProduccion++; //en que nodo de la lista i-esima se encuentra la regla de prod actual
+    }
+  }
+}
 
+int BuscarIndiceenGramatica(char letra, char* gramatica){
+  int longitud;
+  longitud=strlen(gramatica);
+  for(int i=0;i<longitud;i++){
+    if(letra==gramatica[i])
+      return i;
+  }
+  return -1;
+}
 
+int BuscarColumna(columnasTabla *simsTerminales, char letra){
+  for(int i=0;i<8;i++){
+    if(simsTerminales[i].simbolo==letra){
+      return i;
+    }
+  }
+  return -1;
+}
 
 void introducirToken(char *tipoToken, char *cadenaTmp, Token **listTokens, int *numTokens) {
     //printf("\n Antes de aumentar tamaño de lista de tokens\n");
