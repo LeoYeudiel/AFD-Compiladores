@@ -189,6 +189,7 @@ int main(int argc, char *argv[]) {
           break;
         }
     }
+    apilar(pila2, '$');
     cadenaAnalisis = vaciarPilaEnCadena(pila2);
     printf("\n Cadena tokenizada: %s\n", cadenaAnalisis);
     fclose(archivo2);
@@ -288,13 +289,12 @@ int main(int argc, char *argv[]) {
       }
       printf("\n");
     }
-
     int posCadena;
     //Se valida que la cadena sea aceptada por el analizador sintactico LL1
     PILA validacion;
     validacion=crearPila();
     //se añade el simbolo de fin de pila
-    //apilar(validacion, '$');
+    apilar(validacion, '$');
     //se añade la regla de produccion inicial E
     apilar(validacion, 'E');
     posCadena=validarCadena(cadenaAnalisis, ReglasProd, matrizBusqueda, gramatica, validacion, simsTerminales);
@@ -311,8 +311,6 @@ int main(int argc, char *argv[]) {
 }
 
 int validarCadena(char *cadenaAnalisis, LISTA*ReglasProd, int **matrizBusqueda, char*gramatica, PILA validacion, columnasTabla *simsTerminales){
-  PILA aux;
-  aux=crearPila();
   char coincidencia, car;
   int posCadena=0;
   int posFila, posColumna;
@@ -322,17 +320,10 @@ int validarCadena(char *cadenaAnalisis, LISTA*ReglasProd, int **matrizBusqueda, 
     if(coincidencia!=cadenaAnalisis[posCadena]){
       posFila=BuscarIndiceenGramatica(coincidencia, gramatica);
       posColumna=BuscarColumna(simsTerminales, cadenaAnalisis[posCadena]);
-      printf("\n %d %d\n", posFila, posColumna);
+      //printf("\n %d %d\n", posFila, posColumna);
       //validamos que exista una regla d eproduccion en la celda de la matriz
       if(matrizBusqueda[posFila][posColumna]!=-1){
         insertarProduccionEnFila(validacion, ReglasProd, posFila, matrizBusqueda[posFila][posColumna]);
-        /*IntercambiarPilas(validacion, aux);
-        while(es_vaciaPila(aux)!=1){
-          car=desapilar(aux);
-          printf("%c", car);
-          apilar(validacion, car);
-        }
-        printf("\n");*/
 
       }else{
         return posCadena;
@@ -341,8 +332,9 @@ int validarCadena(char *cadenaAnalisis, LISTA*ReglasProd, int **matrizBusqueda, 
       if(elemTope(validacion)=='<')
         coincidencia=desapilar(validacion);
     }else{
+      //mostrar el caracter procesado:
+     printf("%c", cadenaAnalisis[posCadena]);
       //si se trata de un simbolo terminal avanzar en la cadena 
-      printf("%c", cadenaAnalisis[posCadena]);
       posCadena++;
     }
   }
@@ -368,6 +360,7 @@ void insertarProduccionEnFila(PILA validacion, LISTA *ReglasProd, int fila, int 
   }
   //insertamos los datos en la pila original de validacion de forma invertida
   IntercambiarPilas(aux, validacion);
+  free(aux);
 }
 
 
