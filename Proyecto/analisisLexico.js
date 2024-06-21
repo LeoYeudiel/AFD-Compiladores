@@ -51,6 +51,7 @@ const TokenType = {
   
   //Identificadores y literales
   IDENTIFICADOR: 'IDENTIFICADOR',  // Para identificar cualquier otro identificador
+  FLOTANTE: 'FLOTANTE',  // Para números
   NUMERO: 'NUMBER',  // Para números
   STRING: 'STRING',  // Para cadenas de texto
 
@@ -59,6 +60,13 @@ const TokenType = {
   RESTA: 'RESTA',
   MULTIPLICACION: 'MULTIPLICATION',
   DIVISION: 'DIVISION',
+
+  //Operadores Lógicos
+  IGUAL: 'IGUAL',
+  MENORQUE: 'MENORQUE',
+  MAYORQUE: 'MAYORQUE',
+  MAYORIGUAL: 'MAYORIGUAL',
+  MENORIGUAL: 'MENORIGUAL',
 
   //Delimitadores
   IZQPAREN: 'IZQPAREN', //(
@@ -106,12 +114,18 @@ const TokenPatterns = [
   { type: TokenType.RESTA, pattern: /^\-\b/},
   { type: TokenType.MULTIPLICACION, pattern: /^\*\b/},
   { type: TokenType.DIVISION, pattern: /^\/\b/},
+  { type: TokenType.IGUAL, pattern: /^==\b/},
+  { type: TokenType.MAYORIGUAL, pattern: /^>=\b/},
+  { type: TokenType.MENORIGUAL, pattern: /^<=\b/},
+  { type: TokenType.MENORQUE, pattern: /^<\b/},
+  { type: TokenType.MAYORQUE, pattern: /^>\b/},
   { type: TokenType.IZQPAREN, pattern: /^\(\b/},
   { type: TokenType.RIGPAREN, pattern: /^\)\b/ },
   { type: TokenType.COMA, pattern: /^,/ },
   { type: TokenType.SALTO, pattern: /^;/ },
   { type: TokenType.IDENTIFICADOR, pattern: /^[a-zA-Z_]\w*\b/ },  // Para otros identificadores
-  { type: TokenType.NUMERO, pattern: /^\d+(\.\d+)?\b/ },  // Para números
+  { type: TokenType.FLOTANTE, pattern: /^\d+(\.\d+)?\b/ },  // Para números flotantes
+  { type: TokenType.NUMERO, pattern: /^\d\b/ },  // Para números enteros
   { type: TokenType.STRING, pattern: /"([^"\\]|\\.)*"/ },  // Para cadenas de texto
 ]
 
@@ -178,20 +192,34 @@ class Lexer {
 }
 
 //Prueba
-const input = `Algoritmo prueba;
-Definir x Como Entero;
-Leer x;
-Escribir x;
-FinAlgoritmo;`;
-const lexer = new Lexer(input);
 
-let tokens = [];
-let token;
-do {
-  token = lexer.getNextToken();
-  tokens.push(token);
-} while (token.type !== TokenType.EOF);
+function compilar() {
+  let input = document.getElementById("progra").value;
+  
+  const lexer = new Lexer(input);
+  
+  let tokens = [];
+  let token;
+  do {
+    token = lexer.getNextToken();
+    tokens.push(token);
+  } while (token.type !== TokenType.EOF);
+  
+  console.log(tokens)
+  document.getElementById('conso').value = "Analizador lexico pasado"
+  analizadorSintactico(tokens)
+}
 
-console.log(tokens)
 
-
+function analizadorSintactico(tokens) {
+  pos = 0;
+  if (S(tokens)) {
+    console.log(tokens[pos])
+    document.getElementById('conso').value += "\nAnalizador sintactico pasado, y correcto"
+    console.log("Si es correcto")
+  } else {
+    document.getElementById('conso').value += "\nAnalizador sintactico pasado, y NO correcto"
+    console.log(tokens[pos])
+    console.log("No es correcto")
+  }
+}

@@ -4,9 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Compilador Pseint</title>
+  <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
-  
+  <nav>
+    <h1>Compiador Pseint</h1>
+  </nav>
+  <main>
+    <div class="buttons">
+      <button class="mainButton" onclick="compilar()">Compilar</button>
+      <input type="file" name="" id="archivo">
+    </div>
+    <div class="inputs">
+      <div class="programacion">
+        <div class="intruccion">Escriba el código a compilar en el textarea</div>
+        <textarea name="" id="progra" placeholder="Escriba su código así" ></textarea>
+      </div>
+      <div class="console">
+        <div class="intruccion">Consola: </div>
+        <textarea name="" id="conso" placeholder="Su respuesta es..."></textarea>
+      </div>
+    </div>
+  </main>
 </body>
+<script src="analisisSintactico.js"></script>
 <script src="analisisLexico.js"></script>
 </html>
