@@ -110,22 +110,23 @@ const TokenPatterns = [
   { type: TokenType.Y, pattern: /^Y\b/ },
   { type: TokenType.O, pattern: /^O\b/ },
   { type: TokenType.NO, pattern: /^No\b/ },
-  { type: TokenType.SUMA, pattern: /^\+\b/},
-  { type: TokenType.RESTA, pattern: /^\-\b/},
-  { type: TokenType.MULTIPLICACION, pattern: /^\*\b/},
-  { type: TokenType.DIVISION, pattern: /^\/\b/},
-  { type: TokenType.IGUAL, pattern: /^==\b/},
-  { type: TokenType.MAYORIGUAL, pattern: /^>=\b/},
-  { type: TokenType.MENORIGUAL, pattern: /^<=\b/},
-  { type: TokenType.MENORQUE, pattern: /^<\b/},
-  { type: TokenType.MAYORQUE, pattern: /^>\b/},
-  { type: TokenType.IZQPAREN, pattern: /^\(\b/},
-  { type: TokenType.RIGPAREN, pattern: /^\)\b/ },
+  { type: TokenType.SUMA, pattern: /^\+/},
+  { type: TokenType.RESTA, pattern: /^\-/},
+  { type: TokenType.MULTIPLICACION, pattern: /^\*/},
+  { type: TokenType.DIVISION, pattern: /^\//},
+  { type: TokenType.IGUAL, pattern: /^==/},
+  { type: TokenType.ASIGNACION, pattern: /^=/},
+  { type: TokenType.MAYORIGUAL, pattern: /^>=/},
+  { type: TokenType.MENORIGUAL, pattern: /^<=/},
+  { type: TokenType.MENORQUE, pattern: /^</},
+  { type: TokenType.MAYORQUE, pattern: /^>/},
+  { type: TokenType.IZQPAREN, pattern: /^\(/},
+  { type: TokenType.RIGPAREN, pattern: /^\)/ },
   { type: TokenType.COMA, pattern: /^,/ },
   { type: TokenType.SALTO, pattern: /^;/ },
   { type: TokenType.IDENTIFICADOR, pattern: /^[a-zA-Z_]\w*\b/ },  // Para otros identificadores
-  { type: TokenType.FLOTANTE, pattern: /^\d+(\.\d+)?\b/ },  // Para números flotantes
-  { type: TokenType.NUMERO, pattern: /^\d\b/ },  // Para números enteros
+  { type: TokenType.NUMERO, pattern: /^-?\d+(\.\d+)?\b/ },  // Para números flotantes
+  /* { type: TokenType.NUMERO, pattern: /^-?\d+\b/ },  // Para números enteros */
   { type: TokenType.STRING, pattern: /"([^"\\]|\\.)*"/ },  // Para cadenas de texto
 ]
 
@@ -175,6 +176,7 @@ class Lexer {
     this.skipWhitespace();
     const remainingInput = this.input.slice(this.pos);
     let value;
+    /* console.log(remainingInput) */
     for (const { type, pattern } of TokenPatterns) {
       const match = remainingInput.match(pattern);
       if (match) {
@@ -200,10 +202,13 @@ function compilar() {
   
   let tokens = [];
   let token;
+  let i = 50;
   do {
     token = lexer.getNextToken();
+    console.log(token);
     tokens.push(token);
-  } while (token.type !== TokenType.EOF);
+    i--;
+  } while (token.type !== TokenType.EOF && i != 0);
   
   console.log(tokens)
   document.getElementById('conso').value = "Analizador lexico pasado"
