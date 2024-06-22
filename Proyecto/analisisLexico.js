@@ -202,13 +202,13 @@ function compilar() {
   
   let tokens = [];
   let token;
-  let i = 50;
+  //let i = 50;
   do {
     token = lexer.getNextToken();
     console.log(token);
     tokens.push(token);
-    i--;
-  } while (token.type !== TokenType.EOF && i != 0);
+    //i--;
+  } while (token.type !== TokenType.EOF && token.type !== TokenType.UNDEFINED);
   
   console.log(tokens)
   document.getElementById('conso').value = "Analizador lexico pasado"
