@@ -1,5 +1,6 @@
 //Gramatica
 var pos = 0
+var errores = []
 //S -> Algoritmo id CONTENIDO FinAlgoritmo
 function S(tokens) {
   let posIni = pos;
@@ -15,7 +16,7 @@ function S(tokens) {
     }
   }
 
-  console.log(tokens[pos])
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -70,6 +71,7 @@ function INSTRUCCION(tokens) {
   if (INSTANCIAFUNCION(tokens))
     return 1;
 
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -87,6 +89,7 @@ function DECLARACION(tokens) {
       }
   }
 
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -113,6 +116,7 @@ function REPETIRVARIABLE(tokens) {
       return 1;
   }
 
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -165,6 +169,7 @@ function TIPODATO(tokens) {
     return 1;
   }
 
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -181,6 +186,7 @@ function ASIGNACION(tokens) {
     }
   }
     
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -227,6 +233,7 @@ function VALOR(tokens) {
   if (EXPRESION(tokens))
     return 1;
 
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -256,6 +263,7 @@ function EXPRESION(tokens) {
   if(TERMINO(tokens))
     return 1;
 
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -285,6 +293,7 @@ function TERMINO(tokens) {
   if (FACTOR(tokens))
     return 1;
   
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -324,6 +333,7 @@ function FACTOR(tokens) {
       }
   }
 
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -340,6 +350,7 @@ function FUNCION(tokens) {
         if (VARIABLES(tokens))
           if (TokenType.RIGPAREN == tokens[pos].type) {
             pos++;
+            console.log("Paso por aqui" + tokens[pos].type)
             if (CONTENIDOFUNCION(tokens))
               if (TokenType.FINFUNCION == tokens[pos].type) {
                 pos++;
@@ -350,6 +361,7 @@ function FUNCION(tokens) {
     }
   }
 
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -409,6 +421,7 @@ function INSTRUCCIONFUNCION(tokens) {
   if (INSTANCIAFUNCION(tokens))
     return 1;
 
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -424,6 +437,7 @@ function RETORNARVALOR(tokens) {
     }
   }
 
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -460,6 +474,7 @@ function CONDICION(tokens) {
   if (TokenType.SI == tokens[pos].type) {
     pos++;
     if (TokenType.IZQPAREN == tokens[pos].type) {
+      pos++;
       if (EXPRESIONCONDICION(tokens))
         if (TokenType.RIGPAREN == tokens[pos].type) {
           pos++;
@@ -475,6 +490,7 @@ function CONDICION(tokens) {
     }
   }
 
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -557,6 +573,7 @@ function EXPRESIONCONDICION(tokens) {
   if (EXPRESION1(tokens))
     return 1;
 
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -587,6 +604,7 @@ function EXPRESION1(tokens) {
   if (TERMINO1(tokens))
     return 1;
 
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -616,6 +634,7 @@ function TERMINO1(tokens) {
   if (FACTOR1(tokens))
     return 1;
 
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -661,6 +680,7 @@ function FACTOR1(tokens) {
     return 1;
   }
 
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -687,6 +707,7 @@ function CICLO(tokens) {
     }
   }
 
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -713,6 +734,7 @@ function FUNCIONPREDER(tokens) {
     }
   }
   
+  errores.push(tokens[pos]);
   return 0;
 }
 
@@ -732,6 +754,7 @@ function INSTANCIAFUNCION(tokens) {
     }
   }
 
+  errores.push(tokens[pos]);
   return 0;
 }
 

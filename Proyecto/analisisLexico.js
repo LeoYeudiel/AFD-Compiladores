@@ -123,7 +123,7 @@ const TokenPatterns = [
   { type: TokenType.IZQPAREN, pattern: /^\(/},
   { type: TokenType.RIGPAREN, pattern: /^\)/ },
   { type: TokenType.COMA, pattern: /^,/ },
-  { type: TokenType.SALTO, pattern: /^;/ },
+  { type: TokenType.SALTO, pattern: /^\n/ },
   { type: TokenType.IDENTIFICADOR, pattern: /^[a-zA-Z_]\w*\b/ },  // Para otros identificadores
   { type: TokenType.NUMERO, pattern: /^-?\d+(\.\d+)?\b/ },  // Para números flotantes
   /* { type: TokenType.NUMERO, pattern: /^-?\d+\b/ },  // Para números enteros */
@@ -168,9 +168,9 @@ class Lexer {
     }
   }
 
-  getNextToken() {
+  getNextToken(index) {
     if (this.pos >= this.input.length) {
-      return new Token(TokenType.EOF, null);
+      return new Token(TokenType.EOF, null, index);
     }
     this.currentChar = this.input[this.pos];
     this.skipWhitespace();
@@ -182,13 +182,13 @@ class Lexer {
       if (match) {
         value = match[0];
         this.pos += value.length;
-        const newToken = new Token(type, value, this.line);
+        const newToken = new Token(type, value, index);
         if (type == "SALTO")
           this.line++;
         return newToken;
       }
     }
-    return new Token("UNDEFINED", value);
+    return new Token("UNDEFINED", value, index);
   }
 
 }
@@ -197,18 +197,23 @@ class Lexer {
 
 function compilar() {
   let input = document.getElementById("progra").value;
-  
-  const lexer = new Lexer(input);
+  const lineas = input.split('\n');
+  console.log(lineas)
   
   let tokens = [];
   let token;
   //let i = 50;
-  do {
-    token = lexer.getNextToken();
-    console.log(token);
-    tokens.push(token);
-    //i--;
-  } while (token.type !== TokenType.EOF && token.type !== TokenType.UNDEFINED);
+  for (let i = 0; i < lineas.length; i++){
+    const lexer = new Lexer(lineas[i].trim());
+    do {
+      token = lexer.getNextToken(i);
+      if (token.type != TokenType.EOF) {
+        console.log(token);
+        tokens.push(token);
+      }
+      //i--;
+    } while (token.type !== TokenType.EOF && token.type !== TokenType.UNDEFINED);
+  }
   
   console.log(tokens)
   document.getElementById('conso').value = "Analizador lexico pasado"
@@ -218,13 +223,17 @@ function compilar() {
 
 function analizadorSintactico(tokens) {
   pos = 0;
+  errores = []
   if (S(tokens)) {
     console.log(tokens[pos])
-    document.getElementById('conso').value += "\nAnalizador sintactico pasado, y correcto"
+    document.getElementById('conso').value += `
+Analizador sintactico pasado, y correcto`
     console.log("Si es correcto")
   } else {
-    document.getElementById('conso').value += "\nAnalizador sintactico pasado, y NO correcto"
-    console.log(tokens[pos])
+    document.getElementById('conso').value += `
+Analizador sintactico pasado, y NO correcto
+    Se quedó en la palabra ${errores[errores.length - 1].value} en la línea ${errores[errores.length - 1].line + 1}`
+    console.log(errores[errores.length - 1])
     console.log("No es correcto")
   }
 }
