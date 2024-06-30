@@ -15,11 +15,13 @@ void introducirToken(char *, char *, Token **, int *);
 Token *aumenntartamanioLista(Token **, int *);
 char *vaciarPilaEnCadena(Pila *);
 
+//Prototipos de las funciones para las gramáticas
 void sintactico();
 int E(char *, int *);
 int T(char *, int *);
 int F(char *, int *);
 
+//función principal
 int main(int argc, char *argv[]) {
     char *cadenaTmp = NULL;
     int numTokens = 0, i, es_numero = 0, no_valida = 0;
@@ -27,11 +29,13 @@ int main(int argc, char *argv[]) {
     Token *listTokens = NULL;
     FILE *archivo, *archivoSalida;
 
+    //Valida que se haya especificado un archivo de texto
     if (argc != 2) {
         printf("Ejecucion incorrecta. Debe de proporcionar el nombre del archivo.\n");
         exit(0);
     }
 
+  //Valida que se haya especificado un archivo de texto existente
     archivo = fopen(argv[1], "r");
     if (archivo == NULL) {
         printf("\n El archivo no se pudo abrir");

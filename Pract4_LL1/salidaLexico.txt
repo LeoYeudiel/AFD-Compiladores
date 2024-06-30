@@ -1,6 +1,5 @@
 < ID, abc >
 < OPERADOR, + >
-< OPERADOR, ( >
 < ID, g >
 < OPERADOR, * >
 < ID, h >
