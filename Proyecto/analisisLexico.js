@@ -58,7 +58,7 @@ const TokenType = {
   //Operadores
   SUMA: 'SUMA',
   RESTA: 'RESTA',
-  MULTIPLICACION: 'MULTIPLICATION',
+  MULTIPLICACION: 'MULTIPLICACION',
   DIVISION: 'DIVISION',
 
   //Operadores Lógicos
@@ -125,9 +125,10 @@ const TokenPatterns = [
   { type: TokenType.COMA, pattern: /^,/ },
   { type: TokenType.SALTO, pattern: /^\n/ },
   { type: TokenType.IDENTIFICADOR, pattern: /^[a-zA-Z_]\w*\b/ },  // Para otros identificadores
-  { type: TokenType.NUMERO, pattern: /^-?\d+(\.\d+)?\b/ },  // Para números flotantes
+  { type: TokenType.NUMERO, pattern: /^-?\d+(\.\d+)?\b$/ },  // Para números flotantes
   /* { type: TokenType.NUMERO, pattern: /^-?\d+\b/ },  // Para números enteros */
-  { type: TokenType.STRING, pattern: /"([^"\\]|\\.)*"/ },  // Para cadenas de texto
+  // { type: TokenType.STRING, pattern: /"([^"\\]|\\.)*"/ },  // Para cadenas de texto
+  { type: TokenType.STRING, pattern: /^"([^"\\]|\\.)*"$/},
 ]
 
 
@@ -189,6 +190,7 @@ class Lexer {
       }
     }
     return new Token("UNDEFINED", value, index);
+    this.line++;
   }
 
 }
